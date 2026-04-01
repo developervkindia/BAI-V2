@@ -119,7 +119,7 @@
                     <div class="mt-8 p-6 bg-danger-50 dark:bg-danger-900/20 rounded-2xl border border-danger-200 dark:border-danger-800">
                         <h3 class="text-lg font-bold text-danger-700 dark:text-danger-400 mb-2">Danger Zone</h3>
                         <p class="text-sm text-danger-600 dark:text-danger-400 mb-4">Deleting this workspace will permanently remove all boards and data.</p>
-                        <form method="POST" action="{{ route('workspaces.destroy', $workspace) }}" onsubmit="return confirm('Are you sure? This cannot be undone.')">
+                        <form method="POST" action="{{ route('workspaces.destroy', $workspace) }}" x-data x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Delete Workspace', message: 'Are you sure? This cannot be undone.', confirmLabel: 'Delete', variant: 'danger', onConfirm: () => $el.submit() })">
                             @csrf @method('DELETE')
                             <x-ui.button type="submit" variant="danger" size="sm">Delete Workspace</x-ui.button>
                         </form>

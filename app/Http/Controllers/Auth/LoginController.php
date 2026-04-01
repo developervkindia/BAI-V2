@@ -24,14 +24,20 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
+            $user = auth()->user();
+
+            if ($user->is_super_admin) {
+                return redirect()->intended(route('super-admin.dashboard'));
+            }
+
             // Process pending invitation — returns board ID if any
-            $boardId = InvitationController::processPendingInvitation(auth()->user());
+            $boardId = InvitationController::processPendingInvitation($user);
 
             if ($boardId) {
                 return redirect()->route('boards.show', $boardId);
             }
 
-            return redirect()->intended(route('dashboard'));
+            return redirect()->intended(route('hub'));
         }
 
         return back()->withErrors([

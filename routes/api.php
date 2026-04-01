@@ -71,7 +71,10 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // All API routes require auth via web session
-Route::middleware('web', 'auth')->group(function () {
+Route::middleware(['web', 'auth', 'throttle:api'])->group(function () {
+
+    // ── BAI Board API ────────────────────────────────────────────────
+    Route::middleware('product.access:board')->group(function () {
 
     // Board Members
     Route::get('/boards/{board}/members', [BoardMemberController::class, 'index']);
@@ -167,12 +170,6 @@ Route::middleware('web', 'auth')->group(function () {
     Route::post('/checklist-templates/{template}/apply/{card}', [ChecklistTemplateController::class, 'apply']);
     Route::delete('/checklist-templates/{template}', [ChecklistTemplateController::class, 'destroy']);
 
-    // Notifications
-    Route::get('/notifications', [NotificationController::class, 'index']);
-    Route::put('/notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
-    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
-    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy']);
-
     // Bulk Actions
     Route::post('/boards/{board}/bulk-actions', [BulkActionController::class, 'execute']);
 
@@ -198,6 +195,17 @@ Route::middleware('web', 'auth')->group(function () {
     Route::get('/boards/{board}/chat', [BoardChatController::class, 'index']);
     Route::post('/boards/{board}/chat', [BoardChatController::class, 'store']);
     Route::delete('/board-messages/{message}', [BoardChatController::class, 'destroy']);
+
+    }); // end board product access
+
+    // Notifications (cross-product)
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::put('/notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy']);
+
+    // ── BAI Projects API ─────────────────────────────────────────────
+    Route::middleware('product.access:projects')->group(function () {
 
     // SmartProjects — Resources & Capacity
     Route::get('/projects/{project}/capacities',               [ResourceController::class, 'capacities']);
@@ -303,9 +311,6 @@ Route::middleware('web', 'auth')->group(function () {
     Route::delete('/project-sprints/{sprint}/tasks/{task}',          [SprintController::class, 'removeTask']);
     Route::post('/project-sprints/{sprint}/complete',                [SprintController::class, 'complete']);
 
-    // Clients — API list for dropdowns
-    Route::get('/clients', [ClientController::class, 'apiIndex']);
-
     // SmartProjects — Scope changes
     Route::post('/projects/{project}/scope-changes',    [ProjectScopeChangeController::class, 'store']);
     Route::put('/project-scope-changes/{change}',       [ProjectScopeChangeController::class, 'update']);
@@ -368,6 +373,11 @@ Route::middleware('web', 'auth')->group(function () {
     Route::post('/projects/{project}/clone',                  [ProjectTemplateController::class, 'clone']);
     Route::delete('/project-templates/{template}',            [ProjectTemplateController::class, 'destroy']);
 
+    // Clients — API list for dropdowns
+    Route::get('/clients', [ClientController::class, 'apiIndex']);
+
+    }); // end projects product access
+
     // Employee Profile Sub-resources
     Route::post('/employee-profiles/{profile}/education',      [EmployeeProfileApiController::class, 'storeEducation']);
     Route::put('/employee-education/{education}',              [EmployeeProfileApiController::class, 'updateEducation']);
@@ -384,6 +394,7 @@ Route::middleware('web', 'auth')->group(function () {
     Route::delete('/employee-skills/{skill}',                  [EmployeeProfileApiController::class, 'destroySkill']);
 
     // ── Opportunity API ────────────────────────────────────────────
+    Route::middleware('product.access:opportunity')->group(function () {
     Route::get('/opp/my-tasks',                         [OppTaskController::class, 'myTasks']);
     Route::post('/opp/tasks',                        [OppTaskController::class, 'store']);
     Route::get('/opp/tasks/{task}',                  [OppTaskController::class, 'show']);
@@ -457,6 +468,55 @@ Route::middleware('web', 'auth')->group(function () {
     // Opportunity — Favorites
     Route::get('/opp/favorites',                     [OppFavoriteController::class, 'index']);
     Route::post('/opp/favorites/toggle',             [OppFavoriteController::class, 'toggle']);
+    }); // end opportunity product access
+
+    // ── BAI HR API ──────────────────────────────────────────────────
+    Route::middleware('product.access:hr')->group(function () {
+    Route::post('/hr/attendance/clock-in',                    [\App\Http\Controllers\Api\HrAttendanceApiController::class, 'clockIn']);
+    Route::post('/hr/attendance/clock-out',                   [\App\Http\Controllers\Api\HrAttendanceApiController::class, 'clockOut']);
+    Route::post('/hr/attendance/{log}/regularize',            [\App\Http\Controllers\Api\HrAttendanceApiController::class, 'regularize']);
+    Route::get('/hr/attendance/today',                        [\App\Http\Controllers\Api\HrAttendanceApiController::class, 'todayStatus']);
+    Route::post('/hr/leave-requests',                         [\App\Http\Controllers\Api\HrLeaveApiController::class, 'store']);
+    Route::post('/hr/leave-requests/{leaveRequest}/approve',   [\App\Http\Controllers\Api\HrLeaveApiController::class, 'approve']);
+    Route::post('/hr/leave-requests/{leaveRequest}/reject',   [\App\Http\Controllers\Api\HrLeaveApiController::class, 'reject']);
+    Route::post('/hr/leave-requests/{leaveRequest}/cancel',   [\App\Http\Controllers\Api\HrLeaveApiController::class, 'cancel']);
+    Route::get('/hr/leave-balances/{profile}',                [\App\Http\Controllers\Api\HrLeaveApiController::class, 'balances']);
+    Route::get('/hr/salary-components',                        [\App\Http\Controllers\Api\HrPayrollApiController::class, 'listComponents']);
+    Route::post('/hr/salary-components',                       [\App\Http\Controllers\Api\HrPayrollApiController::class, 'storeComponent']);
+    Route::put('/hr/salary-components/{component}',            [\App\Http\Controllers\Api\HrPayrollApiController::class, 'updateComponent']);
+    Route::delete('/hr/salary-components/{component}',         [\App\Http\Controllers\Api\HrPayrollApiController::class, 'deleteComponent']);
+    Route::get('/hr/salary-structures/{profile}',              [\App\Http\Controllers\Api\HrPayrollApiController::class, 'getStructure']);
+    Route::post('/hr/salary-structures/{profile}',             [\App\Http\Controllers\Api\HrPayrollApiController::class, 'saveStructure']);
+    Route::post('/hr/payroll-runs',                            [\App\Http\Controllers\Api\HrPayrollApiController::class, 'processRun']);
+    Route::post('/hr/payroll-runs/{run}/finalize',            [\App\Http\Controllers\Api\HrPayrollApiController::class, 'finalizeRun']);
+    Route::post('/hr/payroll-runs/{run}/mark-paid',           [\App\Http\Controllers\Api\HrPayrollApiController::class, 'markPaid']);
+    Route::post('/hr/reviews/{review}/submit',                [\App\Http\Controllers\Api\HrReviewApiController::class, 'submitReview']);
+    Route::post('/hr/review-ratings',                         [\App\Http\Controllers\Api\HrReviewApiController::class, 'rateItem']);
+    Route::post('/hr/expense-claims',                         [\App\Http\Controllers\Api\HrExpenseApiController::class, 'store']);
+    Route::post('/hr/expense-claims/{claim}/submit',          [\App\Http\Controllers\Api\HrExpenseApiController::class, 'submit']);
+    Route::post('/hr/expense-claims/{claim}/approve',         [\App\Http\Controllers\Api\HrExpenseApiController::class, 'approve']);
+    Route::post('/hr/expense-claims/{claim}/reject',          [\App\Http\Controllers\Api\HrExpenseApiController::class, 'reject']);
+    Route::post('/hr/expense-claims/{claim}/reimburse',       [\App\Http\Controllers\Api\HrExpenseApiController::class, 'reimburse']);
+    Route::post('/hr/job-postings',                           [\App\Http\Controllers\Api\HrRecruitmentApiController::class, 'storePosting']);
+    Route::post('/hr/candidates',                             [\App\Http\Controllers\Api\HrRecruitmentApiController::class, 'storeCandidate']);
+    Route::post('/hr/candidates/{candidate}/move',            [\App\Http\Controllers\Api\HrRecruitmentApiController::class, 'moveCandidate']);
+    Route::post('/hr/interviews',                             [\App\Http\Controllers\Api\HrRecruitmentApiController::class, 'scheduleInterview']);
+    Route::put('/hr/interviews/{interview}',                  [\App\Http\Controllers\Api\HrRecruitmentApiController::class, 'submitFeedback']);
+    Route::post('/hr/surveys',                                [\App\Http\Controllers\Api\HrSurveyApiController::class, 'store']);
+    Route::post('/hr/surveys/{survey}/publish',               [\App\Http\Controllers\Api\HrSurveyApiController::class, 'publish']);
+    Route::post('/hr/surveys/{survey}/close',                 [\App\Http\Controllers\Api\HrSurveyApiController::class, 'close']);
+    Route::post('/hr/surveys/{survey}/respond',               [\App\Http\Controllers\Api\HrSurveyApiController::class, 'submitResponse']);
+    Route::post('/hr/announcements',                          [\App\Http\Controllers\Api\HrAnnouncementApiController::class, 'store']);
+    Route::put('/hr/announcements/{announcement}',            [\App\Http\Controllers\Api\HrAnnouncementApiController::class, 'update']);
+    Route::delete('/hr/announcements/{announcement}',         [\App\Http\Controllers\Api\HrAnnouncementApiController::class, 'destroy']);
+    Route::post('/hr/announcements/{announcement}/pin',       [\App\Http\Controllers\Api\HrAnnouncementApiController::class, 'pin']);
+    Route::post('/hr/recognitions',                           [\App\Http\Controllers\Api\HrRecognitionApiController::class, 'store']);
+    Route::delete('/hr/recognitions/{recognition}',           [\App\Http\Controllers\Api\HrRecognitionApiController::class, 'destroy']);
+    }); // end hr product access
+
+    // Global Search (cross-product)
+    Route::middleware('throttle:global-search')
+        ->get('/global-search', [\App\Http\Controllers\Api\GlobalSearchController::class, 'search']);
 
     // Webhooks
     Route::get('/webhooks',                                   [WebhookController::class, 'index']);

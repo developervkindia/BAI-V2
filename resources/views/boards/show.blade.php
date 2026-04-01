@@ -90,7 +90,7 @@
                                         <button @click="copyList(list); open = false" class="w-full text-left px-4 py-2 text-sm text-white/70 hover:bg-white/10">Copy list</button>
                                         <button @click="archiveList(list); open = false" class="w-full text-left px-4 py-2 text-sm text-white/70 hover:bg-white/10">Archive list</button>
                                         <hr class="my-1 border-white/10">
-                                        <button @click="if(confirm('Delete this list and all cards?')) deleteList(list); open = false" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-white/10">Delete list</button>
+                                        <button @click="$dispatch('confirm-modal', { title: 'Delete List', message: 'Delete this list and all cards?', confirmLabel: 'Delete', variant: 'danger', onConfirm: () => { deleteList(list); open = false } })" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-white/10">Delete list</button>
                                     </div>
                                 </div>
                             </template>

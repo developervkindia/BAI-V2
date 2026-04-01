@@ -36,4 +36,16 @@ class SuperAdminProductController extends Controller
 
         return redirect()->back()->with('success', 'Product updated successfully.');
     }
+
+    public function toggleAvailability(Product $product)
+    {
+        $product->update([
+            'is_available' => ! $product->is_available,
+        ]);
+
+        $status = $product->is_available ? 'enabled' : 'disabled';
+        SuperAdminAuditLog::record(auth()->user(), "product.{$status}", $product);
+
+        return redirect()->back()->with('success', "Product {$status} successfully.");
+    }
 }

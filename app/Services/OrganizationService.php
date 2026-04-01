@@ -8,7 +8,8 @@ use App\Models\User;
 class OrganizationService
 {
     public function __construct(
-        protected ProductAccessService $productAccess
+        protected ProductAccessService $productAccess,
+        protected OrgMemberOnboardingService $onboarding,
     ) {}
 
     public function createForUser(User $user, array $data): Organization
@@ -22,8 +23,11 @@ class OrganizationService
         // Attach owner as a member with 'owner' role
         $org->members()->attach($user->id, ['role' => 'owner']);
 
-        // Auto-provision free SmartBoard subscription
+        // Auto-provision free product subscriptions
         $this->productAccess->provisionFreeSmartBoard($org);
+
+        // Cross-product onboarding for the owner
+        $this->onboarding->provisionMember($org, $user, 'owner');
 
         return $org;
     }

@@ -115,7 +115,7 @@
                         @unless($role->is_system)
                             <form action="{{ route('roles.destroy', [$organization, $role]) }}"
                                   method="POST"
-                                  onsubmit="return confirm('Are you sure you want to delete this role? Members with this role will lose these permissions.')">
+                                  x-data x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Delete Role', message: 'Are you sure you want to delete this role? Members with this role will lose these permissions.', confirmLabel: 'Delete', variant: 'danger', onConfirm: () => $el.submit() })">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"

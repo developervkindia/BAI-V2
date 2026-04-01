@@ -882,14 +882,21 @@ function projectManager(data) {
             }
         },
 
-        async deleteTask(task) {
-            if (!confirm(`Delete "${task.title}"?`)) return;
-            const res = await this.apiCall('DELETE', `/api/project-tasks/${task.id}`);
-            if (res && res.success) {
-                this._removeTask(task.id);
-                if (this.selectedTask?.id === task.id) this.selectedTask = null;
-                this._toast('Task deleted');
-            }
+        deleteTask(task) {
+            this.$dispatch('confirm-modal', {
+                title: 'Delete Task',
+                message: `Delete "${task.title}"? This cannot be undone.`,
+                confirmLabel: 'Delete',
+                variant: 'danger',
+                onConfirm: async () => {
+                    const res = await this.apiCall('DELETE', `/api/project-tasks/${task.id}`);
+                    if (res && res.success) {
+                        this._removeTask(task.id);
+                        if (this.selectedTask?.id === task.id) this.selectedTask = null;
+                        this._toast('Task deleted');
+                    }
+                }
+            });
         },
 
         _removeTask(taskId) {
@@ -949,14 +956,21 @@ function projectManager(data) {
             }
         },
 
-        async deleteTaskList(tl) {
-            if (!confirm(`Delete section "${tl.name}" and all its tasks?`)) return;
-            const res = await this.apiCall('DELETE', `/api/projects/${this.projectId}/task-lists/${tl.id}`);
-            if (res && res.success) {
-                const idx = this.taskLists.findIndex(t => t.id === tl.id);
-                if (idx !== -1) this.taskLists.splice(idx, 1);
-                this._toast('Section deleted');
-            }
+        deleteTaskList(tl) {
+            this.$dispatch('confirm-modal', {
+                title: 'Delete Section',
+                message: `Delete section "${tl.name}" and all its tasks? This cannot be undone.`,
+                confirmLabel: 'Delete',
+                variant: 'danger',
+                onConfirm: async () => {
+                    const res = await this.apiCall('DELETE', `/api/projects/${this.projectId}/task-lists/${tl.id}`);
+                    if (res && res.success) {
+                        const idx = this.taskLists.findIndex(t => t.id === tl.id);
+                        if (idx !== -1) this.taskLists.splice(idx, 1);
+                        this._toast('Section deleted');
+                    }
+                }
+            });
         },
 
         async saveListRename(tl) {
@@ -1030,16 +1044,23 @@ function projectManager(data) {
             this._toast(`Updated ${ids.length} task${ids.length !== 1 ? 's' : ''}`);
         },
 
-        async bulkDelete() {
+        bulkDelete() {
             const count = this.selectedTasks.length;
-            if (!confirm(`Delete ${count} selected task${count !== 1 ? 's' : ''}?`)) return;
-            const ids = [...this.selectedTasks];
-            for (const id of ids) {
-                const res = await this.apiCall('DELETE', `/api/project-tasks/${id}`);
-                if (res && res.success) this._removeTask(id);
-            }
-            this.selectedTasks = [];
-            this._toast(`Deleted ${count} task${count !== 1 ? 's' : ''}`);
+            this.$dispatch('confirm-modal', {
+                title: 'Delete Tasks',
+                message: `Delete ${count} selected task${count !== 1 ? 's' : ''}? This cannot be undone.`,
+                confirmLabel: 'Delete',
+                variant: 'danger',
+                onConfirm: async () => {
+                    const ids = [...this.selectedTasks];
+                    for (const id of ids) {
+                        const res = await this.apiCall('DELETE', `/api/project-tasks/${id}`);
+                        if (res && res.success) this._removeTask(id);
+                    }
+                    this.selectedTasks = [];
+                    this._toast(`Deleted ${count} task${count !== 1 ? 's' : ''}`);
+                }
+            });
         },
 
         issueTypeIcon(type) {

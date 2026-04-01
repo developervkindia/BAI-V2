@@ -281,10 +281,17 @@ function milestonesManager() {
             if (res) window.location.reload();
         },
 
-        async deleteMilestone(id) {
-            if (!confirm('Delete this milestone? Tasks will not be deleted.')) return;
-            const res = await this.apiCall('DELETE', `/api/project-milestones/${id}`);
-            if (res !== null) window.location.reload();
+        deleteMilestone(id) {
+            this.$dispatch('confirm-modal', {
+                title: 'Delete Milestone',
+                message: 'Delete this milestone? Tasks will not be deleted.',
+                confirmLabel: 'Delete',
+                variant: 'danger',
+                onConfirm: async () => {
+                    const res = await this.apiCall('DELETE', `/api/project-milestones/${id}`);
+                    if (res !== null) window.location.reload();
+                }
+            });
         },
 
         async apiCall(method, url, data = null) {

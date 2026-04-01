@@ -144,7 +144,7 @@
 
             {{-- Delete --}}
             <form method="POST" action="{{ route('clients.destroy', $client) }}" class="mt-3"
-                  onsubmit="return confirm('Delete this client? Projects will be unlinked.')">
+                  x-data x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Delete Client', message: 'Delete this client? Projects will be unlinked.', confirmLabel: 'Delete', variant: 'danger', onConfirm: () => $el.submit() })">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="w-full py-2 rounded-xl text-red-400/70 hover:text-red-400 hover:bg-red-500/10 text-[12px] transition-colors">

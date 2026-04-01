@@ -3,12 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\HubDashboardService;
+use App\Services\PlanService;
 use App\Services\ProductAccessService;
 use Illuminate\Http\Request;
 
 class HubController extends Controller
 {
-    public function __construct(protected ProductAccessService $productAccess) {}
+    public function __construct(
+        protected ProductAccessService $productAccess,
+        protected HubDashboardService $dashboardService,
+        protected PlanService $planService,
+    ) {}
 
     public function index(Request $request)
     {
@@ -21,12 +27,28 @@ class HubController extends Controller
             ->pluck('key')
             ->toArray();
 
+        $quickStats = [];
+        $recentActivity = [];
+        $planDetails = [];
+
+        if ($currentOrg) {
+            $quickStats = $this->dashboardService->getQuickStats($user, $currentOrg);
+            $recentActivity = $this->dashboardService->getRecentActivity($user, $currentOrg, 8);
+
+            foreach ($accessibleKeys as $key) {
+                $planDetails[$key] = $this->planService->getPlanDetails($currentOrg, $key);
+            }
+        }
+
         return view('hub.index', [
             'currentOrg'     => $currentOrg,
             'organizations'  => $organizations,
             'allProducts'    => $allProducts,
             'accessibleKeys' => $accessibleKeys,
             'productConfig'  => config('products'),
+            'quickStats'     => $quickStats,
+            'recentActivity' => $recentActivity,
+            'planDetails'    => $planDetails,
         ]);
     }
 }

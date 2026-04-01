@@ -12,8 +12,10 @@ class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        $boardProduct    = Product::where('key', 'board')->first();
-        $projectsProduct = Product::where('key', 'projects')->first();
+        $boardProduct       = Product::where('key', 'board')->first();
+        $projectsProduct    = Product::where('key', 'projects')->first();
+        $opportunityProduct = Product::where('key', 'opportunity')->first();
+        $hrProduct          = Product::where('key', 'hr')->first();
 
         $permissions = [
             // ── Global (no product) ───────────────────────────────────
@@ -29,7 +31,7 @@ class PermissionSeeder extends Seeder
             ['key' => 'admin.users.manage',    'name' => 'Manage Users',                'group' => 'admin',        'product_id' => null],
             ['key' => 'admin.users.view',      'name' => 'View User Profiles',          'group' => 'admin',        'product_id' => null],
 
-            // ── SmartBoard ────────────────────────────────────────────
+            // ── BAI Board ─────────────────────────────────────────────
             ['key' => 'board.boards.view',     'name' => 'View Boards',        'group' => 'boards',   'product_id' => $boardProduct?->id],
             ['key' => 'board.boards.create',   'name' => 'Create Boards',      'group' => 'boards',   'product_id' => $boardProduct?->id],
             ['key' => 'board.boards.edit',     'name' => 'Edit Boards',        'group' => 'boards',   'product_id' => $boardProduct?->id],
@@ -43,7 +45,7 @@ class PermissionSeeder extends Seeder
             ['key' => 'board.labels.manage',   'name' => 'Manage Board Labels','group' => 'boards',   'product_id' => $boardProduct?->id],
             ['key' => 'board.chat.access',     'name' => 'Access Board Chat',  'group' => 'boards',   'product_id' => $boardProduct?->id],
 
-            // ── SmartProjects ─────────────────────────────────────────
+            // ── BAI Projects ──────────────────────────────────────────
             ['key' => 'projects.view',            'name' => 'View Projects',           'group' => 'projects',      'product_id' => $projectsProduct?->id],
             ['key' => 'projects.create',          'name' => 'Create Projects',         'group' => 'projects',      'product_id' => $projectsProduct?->id],
             ['key' => 'projects.edit',            'name' => 'Edit Projects',           'group' => 'projects',      'product_id' => $projectsProduct?->id],
@@ -69,6 +71,52 @@ class PermissionSeeder extends Seeder
             ['key' => 'content.documents.manage', 'name' => 'Manage Documents',     'group' => 'content',       'product_id' => $projectsProduct?->id],
             ['key' => 'content.chat.access',      'name' => 'Access Project Chat',  'group' => 'content',       'product_id' => $projectsProduct?->id],
             ['key' => 'content.comments.create',  'name' => 'Create Comments',      'group' => 'content',       'product_id' => $projectsProduct?->id],
+
+            // ── Opportunity ───────────────────────────────────────────
+            ['key' => 'opp.projects.view',       'name' => 'View Opportunity Projects',    'group' => 'opp_projects', 'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.projects.create',     'name' => 'Create Opportunity Projects',  'group' => 'opp_projects', 'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.projects.edit',       'name' => 'Edit Opportunity Projects',    'group' => 'opp_projects', 'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.projects.delete',     'name' => 'Delete Opportunity Projects',  'group' => 'opp_projects', 'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.tasks.view',          'name' => 'View Opportunity Tasks',       'group' => 'opp_tasks',    'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.tasks.create',        'name' => 'Create Opportunity Tasks',     'group' => 'opp_tasks',    'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.tasks.edit',          'name' => 'Edit Opportunity Tasks',       'group' => 'opp_tasks',    'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.tasks.delete',        'name' => 'Delete Opportunity Tasks',     'group' => 'opp_tasks',    'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.tasks.assign',        'name' => 'Assign Opportunity Tasks',     'group' => 'opp_tasks',    'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.goals.manage',        'name' => 'Manage Goals',                 'group' => 'opp_goals',    'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.portfolios.manage',   'name' => 'Manage Portfolios',            'group' => 'opp_portfolios','product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.reports.view',        'name' => 'View Opportunity Reports',     'group' => 'opp_reports',  'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.forms.manage',        'name' => 'Manage Opportunity Forms',     'group' => 'opp_forms',    'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.rules.manage',        'name' => 'Manage Automation Rules',      'group' => 'opp_rules',    'product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.templates.manage',    'name' => 'Manage Opportunity Templates', 'group' => 'opp_templates','product_id' => $opportunityProduct?->id],
+
+            // ── BAI HR ────────────────────────────────────────────────
+            ['key' => 'hr.people.view',              'name' => 'View People Directory',      'group' => 'hr_people',      'product_id' => $hrProduct?->id],
+            ['key' => 'hr.people.edit',              'name' => 'Edit Employee Profiles',     'group' => 'hr_people',      'product_id' => $hrProduct?->id],
+            ['key' => 'hr.departments.manage',       'name' => 'Manage Departments',         'group' => 'hr_departments', 'product_id' => $hrProduct?->id],
+            ['key' => 'hr.attendance.view_own',      'name' => 'View Own Attendance',        'group' => 'hr_attendance',  'product_id' => $hrProduct?->id],
+            ['key' => 'hr.attendance.view_all',      'name' => 'View All Attendance',        'group' => 'hr_attendance',  'product_id' => $hrProduct?->id],
+            ['key' => 'hr.attendance.manage',        'name' => 'Manage Attendance',          'group' => 'hr_attendance',  'product_id' => $hrProduct?->id],
+            ['key' => 'hr.leave.apply',              'name' => 'Apply for Leave',            'group' => 'hr_leave',       'product_id' => $hrProduct?->id],
+            ['key' => 'hr.leave.view_own',           'name' => 'View Own Leave',             'group' => 'hr_leave',       'product_id' => $hrProduct?->id],
+            ['key' => 'hr.leave.view_all',           'name' => 'View All Leave',             'group' => 'hr_leave',       'product_id' => $hrProduct?->id],
+            ['key' => 'hr.leave.approve',            'name' => 'Approve/Reject Leave',       'group' => 'hr_leave',       'product_id' => $hrProduct?->id],
+            ['key' => 'hr.payroll.view_own',         'name' => 'View Own Payslips',          'group' => 'hr_payroll',     'product_id' => $hrProduct?->id],
+            ['key' => 'hr.payroll.view_all',         'name' => 'View All Payroll',           'group' => 'hr_payroll',     'product_id' => $hrProduct?->id],
+            ['key' => 'hr.payroll.manage',           'name' => 'Manage Payroll',             'group' => 'hr_payroll',     'product_id' => $hrProduct?->id],
+            ['key' => 'hr.payroll.process',          'name' => 'Process Payroll Runs',       'group' => 'hr_payroll',     'product_id' => $hrProduct?->id],
+            ['key' => 'hr.salary.manage',            'name' => 'Manage Salary Structures',   'group' => 'hr_payroll',     'product_id' => $hrProduct?->id],
+            ['key' => 'hr.performance.view_own',     'name' => 'View Own Reviews',           'group' => 'hr_performance','product_id' => $hrProduct?->id],
+            ['key' => 'hr.performance.view_all',     'name' => 'View All Reviews',           'group' => 'hr_performance','product_id' => $hrProduct?->id],
+            ['key' => 'hr.performance.manage',       'name' => 'Manage Review Cycles',       'group' => 'hr_performance','product_id' => $hrProduct?->id],
+            ['key' => 'hr.expenses.submit',          'name' => 'Submit Expense Claims',      'group' => 'hr_expenses',   'product_id' => $hrProduct?->id],
+            ['key' => 'hr.expenses.approve',         'name' => 'Approve Expense Claims',     'group' => 'hr_expenses',   'product_id' => $hrProduct?->id],
+            ['key' => 'hr.expenses.view_all',        'name' => 'View All Expenses',          'group' => 'hr_expenses',   'product_id' => $hrProduct?->id],
+            ['key' => 'hr.recruitment.view',         'name' => 'View Job Postings',          'group' => 'hr_recruitment','product_id' => $hrProduct?->id],
+            ['key' => 'hr.recruitment.manage',       'name' => 'Manage Recruitment',         'group' => 'hr_recruitment','product_id' => $hrProduct?->id],
+            ['key' => 'hr.surveys.manage',           'name' => 'Manage Surveys',             'group' => 'hr_surveys',    'product_id' => $hrProduct?->id],
+            ['key' => 'hr.surveys.respond',          'name' => 'Respond to Surveys',         'group' => 'hr_surveys',    'product_id' => $hrProduct?->id],
+            ['key' => 'hr.announcements.manage',     'name' => 'Manage Announcements',       'group' => 'hr_announcements','product_id' => $hrProduct?->id],
+            ['key' => 'hr.announcements.view',       'name' => 'View Announcements',         'group' => 'hr_announcements','product_id' => $hrProduct?->id],
         ];
 
         foreach ($permissions as $perm) {
@@ -80,7 +128,17 @@ class PermissionSeeder extends Seeder
 
         // Seed default roles for all existing organizations
         $allPermissionIds = Permission::pluck('id')->toArray();
-        $memberPermissionKeys = [
+        $memberPermissionKeys = self::memberPermissionKeys();
+        $memberPermissionIds = Permission::whereIn('key', $memberPermissionKeys)->pluck('id')->toArray();
+
+        Organization::all()->each(function (Organization $org) use ($allPermissionIds, $memberPermissionIds) {
+            self::seedRolesForOrg($org, $allPermissionIds, $memberPermissionIds);
+        });
+    }
+
+    public static function memberPermissionKeys(): array
+    {
+        return [
             // Global
             'org.members.view',
             // Board basics
@@ -90,12 +148,14 @@ class PermissionSeeder extends Seeder
             'time.log', 'time.view_own', 'time.timesheets.submit',
             'financial.budget.view', 'financial.reports.view',
             'content.documents.view', 'content.chat.access', 'content.comments.create',
+            // Opportunity basics
+            'opp.projects.view', 'opp.tasks.view', 'opp.tasks.create', 'opp.tasks.edit', 'opp.tasks.assign',
+            'opp.reports.view',
+            // HR basics
+            'hr.people.view', 'hr.attendance.view_own', 'hr.leave.apply', 'hr.leave.view_own',
+            'hr.payroll.view_own', 'hr.performance.view_own', 'hr.expenses.submit',
+            'hr.surveys.respond', 'hr.announcements.view',
         ];
-        $memberPermissionIds = Permission::whereIn('key', $memberPermissionKeys)->pluck('id')->toArray();
-
-        Organization::all()->each(function (Organization $org) use ($allPermissionIds, $memberPermissionIds) {
-            self::seedRolesForOrg($org, $allPermissionIds, $memberPermissionIds);
-        });
     }
 
     public static function seedRolesForOrg(Organization $org, ?array $allPermissionIds = null, ?array $memberPermissionIds = null): void
@@ -104,15 +164,7 @@ class PermissionSeeder extends Seeder
             $allPermissionIds = Permission::pluck('id')->toArray();
         }
         if ($memberPermissionIds === null) {
-            $memberPermissionKeys = [
-                'org.members.view',
-                'board.boards.view', 'board.cards.create', 'board.cards.edit', 'board.cards.move', 'board.chat.access',
-                'projects.view', 'tasks.view', 'tasks.create', 'tasks.edit', 'tasks.assign',
-                'time.log', 'time.view_own', 'time.timesheets.submit',
-                'financial.budget.view', 'financial.reports.view',
-                'content.documents.view', 'content.chat.access', 'content.comments.create',
-            ];
-            $memberPermissionIds = Permission::whereIn('key', $memberPermissionKeys)->pluck('id')->toArray();
+            $memberPermissionIds = Permission::whereIn('key', self::memberPermissionKeys())->pluck('id')->toArray();
         }
 
         // Update existing system roles' permissions (or create if missing)

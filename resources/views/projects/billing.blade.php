@@ -348,28 +348,42 @@ function billingManager() {
             }
         },
 
-        async deleteTimeLog(log, entry) {
-            if (!confirm('Delete this time log entry?')) return;
-            const res = await fetch('/api/project-time-logs/' + log.id, {
-                method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        deleteTimeLog(log, entry) {
+            this.$dispatch('confirm-modal', {
+                title: 'Delete Time Log',
+                message: 'Delete this time log entry? This cannot be undone.',
+                confirmLabel: 'Delete',
+                variant: 'danger',
+                onConfirm: async () => {
+                    const res = await fetch('/api/project-time-logs/' + log.id, {
+                        method: 'DELETE',
+                        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                    });
+                    if (res.ok) {
+                        this.timeLogs = this.timeLogs.filter(l => l.id !== log.id);
+                        this.recalcTotals();
+                    }
+                }
             });
-            if (res.ok) {
-                this.timeLogs = this.timeLogs.filter(l => l.id !== log.id);
-                this.recalcTotals();
-            }
         },
 
-        async lockWeek() {
-            if (!confirm('Lock this billing week? No further edits will be allowed.')) return;
-            const res = await fetch('/api/project-billing-weeks/' + this.activeWeek.id + '/lock', {
-                method: 'POST',
-                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        lockWeek() {
+            this.$dispatch('confirm-modal', {
+                title: 'Lock Billing Week',
+                message: 'Lock this billing week? No further edits will be allowed.',
+                confirmLabel: 'Lock',
+                variant: 'danger',
+                onConfirm: async () => {
+                    const res = await fetch('/api/project-billing-weeks/' + this.activeWeek.id + '/lock', {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        this.activeWeek = data.week;
+                    }
+                }
             });
-            if (res.ok) {
-                const data = await res.json();
-                this.activeWeek = data.week;
-            }
         },
     };
 }

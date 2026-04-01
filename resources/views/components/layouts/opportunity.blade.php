@@ -50,18 +50,22 @@
         @endforeach
 
         {{-- Insights section --}}
-        <div class="pt-4 pb-1 px-3">
+        <div class="pt-4 pb-1 px-3 flex items-center justify-between">
             <span class="text-[11px] font-semibold text-white/25 uppercase tracking-wider">Insights</span>
+            <span class="text-[11px] text-white/15">+</span>
         </div>
-        <a href="#" class="flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[13px] font-medium text-white/45 hover:bg-white/[0.04] hover:text-white/70 transition-colors">
+        <a href="{{ route('opportunity.reporting.index') }}"
+           class="flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[13px] font-medium transition-colors {{ $currentView === 'reporting' ? 'bg-white/[0.08] text-white' : 'text-white/45 hover:bg-white/[0.04] hover:text-white/70' }}">
             <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
             Reporting
         </a>
-        <a href="#" class="flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[13px] font-medium text-white/45 hover:bg-white/[0.04] hover:text-white/70 transition-colors">
+        <a href="{{ route('opportunity.portfolios.index') }}"
+           class="flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[13px] font-medium transition-colors {{ $currentView === 'portfolios' ? 'bg-white/[0.08] text-white' : 'text-white/45 hover:bg-white/[0.04] hover:text-white/70' }}">
             <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
             Portfolios
         </a>
-        <a href="#" class="flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[13px] font-medium text-white/45 hover:bg-white/[0.04] hover:text-white/70 transition-colors">
+        <a href="{{ route('opportunity.goals.index') }}"
+           class="flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[13px] font-medium transition-colors {{ $currentView === 'goals' ? 'bg-white/[0.08] text-white' : 'text-white/45 hover:bg-white/[0.04] hover:text-white/70' }}">
             <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
             Goals
         </a>
@@ -98,25 +102,40 @@
         <div class="pt-3 pb-1 px-3">
             <span class="text-[11px] font-semibold text-white/25 uppercase tracking-wider">Teams</span>
         </div>
-        <a href="#" class="flex items-center gap-2.5 px-3 py-[6px] rounded-lg text-[13px] font-medium text-white/45 hover:bg-white/[0.04] hover:text-white/70 transition-colors">
+        @php $currentOrg = auth()->user()->currentOrganization(); @endphp
+        <a href="{{ $currentOrg ? route('organizations.show', $currentOrg) : '#' }}" class="flex items-center gap-2.5 px-3 py-[6px] rounded-lg text-[13px] font-medium text-white/45 hover:bg-white/[0.04] hover:text-white/70 transition-colors">
             <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            {{ auth()->user()->currentOrganization()?->name ?? 'My Team' }}
+            {{ $currentOrg?->name ?? 'My Team' }}
             <svg class="w-3 h-3 ml-auto text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </a>
     </nav>
 
     {{-- Footer --}}
     <div class="border-t border-white/[0.06] p-2 space-y-0.5 shrink-0">
-        <a href="{{ route('hub') }}" class="flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[12px] font-medium text-white/35 hover:text-white/60 hover:bg-white/[0.04] transition-colors">
-            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="5" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="19" cy="5" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="19" r="1.5"/><circle cx="12" cy="19" r="1.5"/><circle cx="19" cy="19" r="1.5"/></svg>
-            BAI Hub
-        </a>
-        <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-3 py-[7px] rounded-lg text-[12px] font-medium text-white/35 hover:text-white/60 hover:bg-white/[0.04] transition-colors">
-            <div class="w-5 h-5 rounded-full bg-teal-500/25 text-teal-400 text-[9px] font-bold flex items-center justify-center shrink-0">
-                {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}
+        <x-product-switcher :currentProduct="'opportunity'" />
+        <div x-data="{ open: false }" @click.away="open = false" class="relative">
+            <button @click="open = !open" class="flex items-center gap-2.5 w-full px-3 py-[7px] rounded-lg text-[12px] font-medium text-white/35 hover:text-white/60 hover:bg-white/[0.04] transition-colors">
+                <div class="w-5 h-5 rounded-full bg-teal-500/25 text-teal-400 text-[9px] font-bold flex items-center justify-center shrink-0">
+                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}
+                </div>
+                <span class="truncate">{{ auth()->user()->name ?? 'User' }}</span>
+            </button>
+            <div x-show="open" x-cloak class="absolute bottom-full left-0 right-0 mb-1 bg-[#1A1A2E] border border-white/[0.08] rounded-lg shadow-xl overflow-hidden">
+                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-3.5 py-2.5 text-[12px] text-white/60 hover:bg-white/[0.06] hover:text-white/80 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Profile
+                </a>
+                <div class="border-t border-white/[0.06]">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-2.5 w-full px-3.5 py-2.5 text-[12px] text-red-400/80 hover:bg-red-500/10 hover:text-red-400 transition-colors text-left">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            Sign Out
+                        </button>
+                    </form>
+                </div>
             </div>
-            <span class="truncate">{{ auth()->user()->name ?? 'User' }}</span>
-        </a>
+        </div>
     </div>
 </aside>
 
@@ -145,9 +164,30 @@
         </div>
 
         {{-- Right actions --}}
-        <div class="flex items-center gap-1.5 shrink-0">
-            <div class="w-7 h-7 rounded-full bg-teal-500/20 text-teal-400 text-[10px] font-bold flex items-center justify-center">
-                {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}
+        <div class="flex items-center gap-1.5 shrink-0" x-data="{ open: false }" @click.away="open = false">
+            <div class="relative">
+                <button @click="open = !open" class="w-7 h-7 rounded-full bg-teal-500/20 text-teal-400 text-[10px] font-bold flex items-center justify-center hover:bg-teal-500/30 transition-colors">
+                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 2)) }}
+                </button>
+                <div x-show="open" x-cloak class="absolute right-0 top-full mt-2 w-48 bg-[#1A1A2E] border border-white/[0.08] rounded-lg shadow-xl overflow-hidden z-50">
+                    <div class="px-3.5 py-2.5 border-b border-white/[0.06]">
+                        <p class="text-[12px] text-white/80 font-medium truncate">{{ auth()->user()->name ?? 'User' }}</p>
+                        <p class="text-[11px] text-white/30 truncate">{{ auth()->user()->email ?? '' }}</p>
+                    </div>
+                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-3.5 py-2.5 text-[12px] text-white/60 hover:bg-white/[0.06] hover:text-white/80 transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        Profile
+                    </a>
+                    <div class="border-t border-white/[0.06]">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="flex items-center gap-2.5 w-full px-3.5 py-2.5 text-[12px] text-red-400/80 hover:bg-red-500/10 hover:text-red-400 transition-colors text-left">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                Sign Out
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -208,5 +248,6 @@
     </main>
 </div>
 
+<x-ui.confirm-modal />
 </body>
 </html>

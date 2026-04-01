@@ -571,17 +571,24 @@ function oppList(data) {
             if (r) { this.isFollowing = r.added; }
         },
 
-        async deleteTask() {
+        deleteTask() {
             if (!this.selectedTask) return;
-            if (!confirm('Delete "' + this.selectedTask.title + '"? This cannot be undone.')) return;
-            const taskId = this.selectedTask.id;
-            const r = await this.api('DELETE', '/api/opp/tasks/' + taskId);
-            if (r) {
-                for (const s of this.sections) {
-                    s.tasks = s.tasks.filter(t => t.id !== taskId);
+            this.$dispatch('confirm-modal', {
+                title: 'Delete Task',
+                message: 'Delete "' + this.selectedTask.title + '"? This cannot be undone.',
+                confirmLabel: 'Delete',
+                variant: 'danger',
+                onConfirm: async () => {
+                    const taskId = this.selectedTask.id;
+                    const r = await this.api('DELETE', '/api/opp/tasks/' + taskId);
+                    if (r) {
+                        for (const s of this.sections) {
+                            s.tasks = s.tasks.filter(t => t.id !== taskId);
+                        }
+                        this.selectedTask = null;
+                    }
                 }
-                this.selectedTask = null;
-            }
+            });
         },
 
         async toggleSubComplete(sub) {

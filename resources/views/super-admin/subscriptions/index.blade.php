@@ -115,7 +115,7 @@
                                 <template x-if="!editing">
                                     <div class="flex items-center gap-2">
                                         <button @click="editing = true" class="sa-btn-outline text-xs px-3 py-1.5">Edit</button>
-                                        <form method="POST" action="{{ route('super-admin.subscriptions.destroy', $sub) }}" onsubmit="return confirm('Delete this subscription? This cannot be undone.')">
+                                        <form method="POST" action="{{ route('super-admin.subscriptions.destroy', $sub) }}" x-data x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Delete Subscription', message: 'Delete this subscription? This cannot be undone.', confirmLabel: 'Delete', variant: 'danger', onConfirm: () => $el.submit() })">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-xs px-3 py-1.5 rounded-md border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors">Delete</button>

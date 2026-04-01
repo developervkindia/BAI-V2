@@ -43,7 +43,7 @@ class SocialAuthController extends Controller
                 'provider_refresh_token' => $socialUser->refreshToken,
             ]);
             Auth::login($socialAccount->user);
-            return redirect()->route('dashboard');
+            return redirect()->route($socialAccount->user->is_super_admin ? 'super-admin.dashboard' : 'hub');
         }
 
         $user = User::where('email', $socialUser->getEmail())->first();
@@ -64,6 +64,6 @@ class SocialAuthController extends Controller
         ]);
 
         Auth::login($user);
-        return redirect()->route('dashboard');
+        return redirect()->route($user->is_super_admin ? 'super-admin.dashboard' : 'hub');
     }
 }

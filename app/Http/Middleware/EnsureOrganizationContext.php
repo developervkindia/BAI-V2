@@ -21,8 +21,16 @@ class EnsureOrganizationContext
             return $next($request);
         }
 
-        // Super admin on super-admin routes — skip org requirement
-        if ($user->is_super_admin && $request->routeIs('super-admin.*')) {
+        // Super admin bypasses all org/product/permission checks
+        if ($user->is_super_admin) {
+            $currentOrg = $user->currentOrganization();
+            $products = $currentOrg
+                ? $this->productAccess->getAccessibleProducts($user)
+                : \App\Models\Product::where('is_available', true)->get();
+
+            view()->share('currentOrganization', $currentOrg);
+            view()->share('accessibleProducts', $products);
+            view()->share('userPermissions', \App\Models\Permission::pluck('key')->toArray());
             view()->share('isSuperAdmin', true);
             return $next($request);
         }
@@ -37,7 +45,7 @@ class EnsureOrganizationContext
         }
 
         // Block deactivated orgs (unless super admin)
-        if (isset($currentOrg->is_active) && !$currentOrg->is_active && !$user->is_super_admin) {
+        if (isset($currentOrg->is_active) && !$currentOrg->is_active) {
             if ($request->expectsJson()) {
                 return response()->json(['error' => 'Organization has been deactivated.'], 403);
             }
@@ -52,7 +60,7 @@ class EnsureOrganizationContext
         view()->share('currentOrganization', $currentOrg);
         view()->share('accessibleProducts', $products);
         view()->share('userPermissions', $userPermissions);
-        view()->share('isSuperAdmin', (bool) $user->is_super_admin);
+        view()->share('isSuperAdmin', false);
 
         return $next($request);
     }

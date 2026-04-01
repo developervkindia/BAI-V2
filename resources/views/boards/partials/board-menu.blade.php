@@ -96,24 +96,38 @@
             if (m) m.role = newRole;
         },
 
-        async removeMember(memberId) {
-            if (!confirm('Remove this member from the board?')) return;
-            const res = await fetch(`/api/boards/{{ $board->id }}/members/${memberId}`, {
-                method: 'DELETE',
-                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }
+        removeMember(memberId) {
+            this.$dispatch('confirm-modal', {
+                title: 'Remove Member',
+                message: 'Remove this member from the board?',
+                confirmLabel: 'Remove',
+                variant: 'danger',
+                onConfirm: async () => {
+                    const res = await fetch(`/api/boards/{{ $board->id }}/members/${memberId}`, {
+                        method: 'DELETE',
+                        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }
+                    });
+                    const data = await res.json();
+                    if (data.error) { alert(data.error); return; }
+                    this.members = this.members.filter(m => m.id !== memberId);
+                }
             });
-            const data = await res.json();
-            if (data.error) { alert(data.error); return; }
-            this.members = this.members.filter(m => m.id !== memberId);
         },
 
-        async cancelInvite(inviteId) {
-            if (!confirm('Cancel this invitation?')) return;
-            await fetch(`/api/boards/{{ $board->id }}/invitations/${inviteId}/cancel`, {
-                method: 'POST',
-                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }
+        cancelInvite(inviteId) {
+            this.$dispatch('confirm-modal', {
+                title: 'Cancel Invitation',
+                message: 'Cancel this invitation?',
+                confirmLabel: 'Cancel Invitation',
+                variant: 'danger',
+                onConfirm: async () => {
+                    await fetch(`/api/boards/{{ $board->id }}/invitations/${inviteId}/cancel`, {
+                        method: 'POST',
+                        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }
+                    });
+                    this.members = this.members.filter(m => m.invite_id !== inviteId);
+                }
             });
-            this.members = this.members.filter(m => m.invite_id !== inviteId);
         },
 
         async resendInvite(inviteId) {
@@ -251,7 +265,7 @@
                         Archive Board
                     </button>
                 </form>
-                <form method="POST" action="{{ route('boards.destroy', $board) }}" onsubmit="return confirm('Permanently delete this board and all its data?')">
+                <form method="POST" action="{{ route('boards.destroy', $board) }}" x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Delete Board', message: 'Permanently delete this board and all its data?', confirmLabel: 'Delete', variant: 'danger', onConfirm: () => $el.submit() })">
                     @csrf @method('DELETE')
                     <button type="submit" class="w-full text-left px-4 py-2.5 rounded-lg hover:bg-red-500/10 text-sm text-red-400 flex items-center gap-3 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -486,7 +500,7 @@
                             <div class="max-w-[85%]">
                                 <div class="flex items-baseline gap-2 mb-0.5 justify-end">
                                     <span class="text-[10px] text-gray-400" x-text="new Date(msg.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})"></span>
-                                    <button @click="if(confirm('Delete this message?')) deleteChat(msg.id)" class="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-400 transition-all">
+                                    <button @click="$dispatch('confirm-modal', { title: 'Delete Message', message: 'Delete this message?', confirmLabel: 'Delete', variant: 'danger', onConfirm: () => { deleteChat(msg.id) } })" class="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-400 transition-all">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                     </button>
                                 </div>

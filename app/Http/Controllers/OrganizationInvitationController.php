@@ -7,11 +7,15 @@ use App\Models\OrganizationInvitation;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\EmployeeProfile;
+use App\Services\OrgMemberOnboardingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class OrganizationInvitationController extends Controller
 {
+    public function __construct(
+        protected OrgMemberOnboardingService $onboarding,
+    ) {}
     public function store(Request $request, Organization $organization)
     {
         abort_unless($organization->isAdmin(auth()->user()), 403);
@@ -93,22 +97,19 @@ class OrganizationInvitationController extends Controller
         $user = User::where('email', $invitation->email)->first();
 
         if ($user) {
+            $systemRole = $invitation->system_role ?? 'member';
+
             // Add user to organization members
             $organization->members()->syncWithoutDetaching([
                 $user->id => [
-                    'system_role' => $invitation->system_role ?? 'member',
+                    'role' => $systemRole,
                 ],
             ]);
 
-            // Create employee profile
-            EmployeeProfile::firstOrCreate([
-                'user_id' => $user->id,
-                'organization_id' => $organization->id,
-            ], [
-                'status' => 'active',
-            ]);
+            // Unified cross-product onboarding: profile, workspace, roles
+            $this->onboarding->provisionMember($organization, $user, $systemRole);
 
-            // Assign role if specified
+            // Assign custom role if specified
             if ($invitation->role_id) {
                 $user->organizationRoles($organization)->syncWithoutDetaching([$invitation->role_id]);
             }

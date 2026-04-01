@@ -75,12 +75,12 @@
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('super-admin.organizations.show', $org) }}" class="sa-btn-outline text-xs px-3 py-1.5">View</a>
                                 @if($org->is_active ?? true)
-                                    <form method="POST" action="{{ route('super-admin.organizations.deactivate', $org) }}" onsubmit="return confirm('Are you sure you want to deactivate this organization?')">
+                                    <form method="POST" action="{{ route('super-admin.organizations.deactivate', $org) }}" x-data x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Deactivate Organization', message: 'Are you sure you want to deactivate this organization?', confirmLabel: 'Deactivate', variant: 'danger', onConfirm: () => $el.submit() })">
                                         @csrf
                                         <button type="submit" class="text-xs px-3 py-1.5 rounded-md border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors">Deactivate</button>
                                     </form>
                                 @else
-                                    <form method="POST" action="{{ route('super-admin.organizations.activate', $org) }}" onsubmit="return confirm('Are you sure you want to activate this organization?')">
+                                    <form method="POST" action="{{ route('super-admin.organizations.activate', $org) }}" x-data x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Activate Organization', message: 'Are you sure you want to activate this organization?', confirmLabel: 'Activate', variant: 'warning', onConfirm: () => $el.submit() })">
                                         @csrf
                                         <button type="submit" class="text-xs px-3 py-1.5 rounded-md border border-green-500/30 text-green-400 hover:bg-green-500/10 transition-colors">Activate</button>
                                     </form>

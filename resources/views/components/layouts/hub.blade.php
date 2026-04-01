@@ -137,5 +137,6 @@
     </main>
 
     <x-ui.toast />
+    <x-ui.confirm-modal />
 </body>
 </html>

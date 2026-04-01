@@ -162,13 +162,20 @@ function scopeManager() {
             });
             location.reload();
         },
-        async deleteChange(id) {
-            if (!confirm('Delete this scope change?')) return;
-            await fetch('/api/project-scope-changes/' + id, {
-                method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        deleteChange(id) {
+            this.$dispatch('confirm-modal', {
+                title: 'Delete Scope Change',
+                message: 'Delete this scope change? This cannot be undone.',
+                confirmLabel: 'Delete',
+                variant: 'danger',
+                onConfirm: async () => {
+                    await fetch('/api/project-scope-changes/' + id, {
+                        method: 'DELETE',
+                        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                    });
+                    location.reload();
+                }
             });
-            location.reload();
         },
     };
 }

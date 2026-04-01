@@ -18,6 +18,10 @@ class CheckPermission
             abort(403);
         }
 
+        if ($user->is_super_admin) {
+            return $next($request);
+        }
+
         foreach ($permissions as $perm) {
             if (!$this->permissionService->userCan($user, $perm)) {
                 if ($request->expectsJson()) {

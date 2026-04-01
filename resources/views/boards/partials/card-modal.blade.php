@@ -163,7 +163,7 @@
                                             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                                             <span x-text="checklist.name"></span>
                                         </h3>
-                                        <button @click="if(confirm('Delete checklist?')) { apiCall(`/api/checklists/${checklist.id}`, 'DELETE'); activeCardFull.checklists = activeCardFull.checklists.filter(c => c.id !== checklist.id) }" class="text-xs text-gray-400 hover:text-danger-500 px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-800">Delete</button>
+                                        <button @click="$dispatch('confirm-modal', { title: 'Delete Checklist', message: 'Are you sure you want to delete this checklist?', confirmLabel: 'Delete', variant: 'danger', onConfirm: () => { apiCall(`/api/checklists/${checklist.id}`, 'DELETE'); activeCardFull.checklists = activeCardFull.checklists.filter(c => c.id !== checklist.id) } })" class="text-xs text-gray-400 hover:text-danger-500 px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-800">Delete</button>
                                     </div>
                                     <!-- Progress bar -->
                                     <div class="flex items-center gap-2">
@@ -233,7 +233,7 @@
                                                     <a :href="`/api/attachments/${att.id}/download`" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary-600 hover:underline truncate block" x-text="att.filename"></a>
                                                     <span class="text-[11px] text-gray-400" x-text="att.human_size"></span>
                                                 </div>
-                                                <button @click="if(confirm('Delete?')) { apiCall(`/api/attachments/${att.id}`, 'DELETE'); activeCardFull.attachments = activeCardFull.attachments.filter(a => a.id !== att.id) }" class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-danger-500 p-1 transition-opacity">
+                                                <button @click="$dispatch('confirm-modal', { title: 'Delete Attachment', message: 'Are you sure you want to delete this attachment?', confirmLabel: 'Delete', variant: 'danger', onConfirm: () => { apiCall(`/api/attachments/${att.id}`, 'DELETE'); activeCardFull.attachments = activeCardFull.attachments.filter(a => a.id !== att.id) } })" class="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-danger-500 p-1 transition-opacity">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                                 </button>
                                             </div>
@@ -295,7 +295,7 @@
                                                         <div class="flex items-center gap-1">
                                                             <button @click="editingComment = true; editBody = comment.body" class="text-[11px] text-gray-400 hover:text-primary-600 hover:underline">Edit</button>
                                                             <span class="text-gray-300">-</span>
-                                                            <button @click="if(confirm('Delete?')) { apiCall(`/api/comments/${comment.id}`, 'DELETE'); activeCardFull.comments = activeCardFull.comments.filter(c => c.id !== comment.id) }" class="text-[11px] text-gray-400 hover:text-danger-500 hover:underline">Delete</button>
+                                                            <button @click="$dispatch('confirm-modal', { title: 'Delete Comment', message: 'Are you sure you want to delete this comment?', confirmLabel: 'Delete', variant: 'danger', onConfirm: () => { apiCall(`/api/comments/${comment.id}`, 'DELETE'); activeCardFull.comments = activeCardFull.comments.filter(c => c.id !== comment.id) } })" class="text-[11px] text-gray-400 hover:text-danger-500 hover:underline">Delete</button>
                                                         </div>
                                                     </template>
                                                 </div>
@@ -371,7 +371,7 @@
                                             <template x-if="editLabel">
                                                 <div class="flex gap-1">
                                                     <button @click="apiCall(`/api/labels/${editLabel.id}`, 'PUT', { name: newName, color: newColor }).then(() => { Object.assign(allLabels.find(la => la.id === editLabel.id), { name: newName, color: newColor }); editMode = false })" class="flex-1 px-2 py-1 rounded gradient-primary text-white text-xs font-medium">Save</button>
-                                                    <button @click="if(confirm('Delete?')) { apiCall(`/api/labels/${editLabel.id}`, 'DELETE').then(() => { allLabels = allLabels.filter(l => l.id !== editLabel.id); editMode = false }) }" class="px-2 py-1 rounded bg-danger-100 text-danger-600 text-xs">Del</button>
+                                                    <button @click="$dispatch('confirm-modal', { title: 'Delete Label', message: 'Are you sure you want to delete this label?', confirmLabel: 'Delete', variant: 'danger', onConfirm: () => { apiCall(`/api/labels/${editLabel.id}`, 'DELETE').then(() => { allLabels = allLabels.filter(l => l.id !== editLabel.id); editMode = false }) } })" class="px-2 py-1 rounded bg-danger-100 text-danger-600 text-xs">Del</button>
                                                 </div>
                                             </template>
                                             <template x-if="!editLabel">
@@ -475,7 +475,7 @@
                             </button>
 
                             <!-- Delete -->
-                            <button @click="if(confirm('Permanently delete this card?')) { apiCall(`/api/cards/${activeCardFull.id}`, 'DELETE').then(() => { removeCardFromList(activeCardFull.id); closeCardModal(); }) }" class="w-full text-left px-3 py-1.5 text-xs font-medium rounded-md bg-gray-200 dark:bg-gray-800 hover:bg-danger-100 dark:hover:bg-danger-900/30 hover:text-danger-600 transition-colors flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                            <button @click="$dispatch('confirm-modal', { title: 'Delete Card', message: 'Permanently delete this card?', confirmLabel: 'Delete', variant: 'danger', onConfirm: () => { apiCall(`/api/cards/${activeCardFull.id}`, 'DELETE').then(() => { removeCardFromList(activeCardFull.id); closeCardModal(); }) } })" class="w-full text-left px-3 py-1.5 text-xs font-medium rounded-md bg-gray-200 dark:bg-gray-800 hover:bg-danger-100 dark:hover:bg-danger-900/30 hover:text-danger-600 transition-colors flex items-center gap-2 text-gray-700 dark:text-gray-300">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                 Delete
                             </button>

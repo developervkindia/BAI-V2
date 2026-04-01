@@ -203,25 +203,32 @@
                 </a>
             </nav>
 
-            {{-- Back to Hub --}}
-            <div class="px-3 pb-2">
-                <a href="{{ route('hub') }}" class="sa-nav-link text-white/30 hover:text-white/50">
-                    <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
-                    </svg>
-                    Back to Hub
-                </a>
-            </div>
-
             {{-- User Info --}}
-            <div class="px-4 py-3 border-t border-white/[0.06]">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-7 h-7 rounded-full bg-red-500/20 flex items-center justify-center">
-                        <span class="text-red-400 text-xs font-medium">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-white/80 text-xs font-medium truncate">{{ auth()->user()->name ?? 'Admin' }}</p>
-                        <p class="text-white/30 text-[10px] truncate">Super Admin</p>
+            <div class="px-3 py-3 border-t border-white/[0.06]" x-data="{ open: false }" @click.away="open = false">
+                <div class="relative">
+                    <button @click="open = !open" class="flex items-center gap-2.5 w-full px-1 py-1 rounded-lg hover:bg-white/[0.04] transition-colors">
+                        <div class="w-7 h-7 rounded-full bg-red-500/20 flex items-center justify-center shrink-0">
+                            <span class="text-red-400 text-xs font-medium">{{ substr(auth()->user()->name ?? 'A', 0, 1) }}</span>
+                        </div>
+                        <div class="min-w-0 text-left">
+                            <p class="text-white/80 text-xs font-medium truncate">{{ auth()->user()->name ?? 'Admin' }}</p>
+                            <p class="text-white/30 text-[10px] truncate">Super Admin</p>
+                        </div>
+                    </button>
+                    <div x-show="open" x-cloak class="absolute bottom-full left-0 right-0 mb-1 bg-[#12121F] border border-white/[0.08] rounded-lg shadow-xl overflow-hidden">
+                        <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-3.5 py-2.5 text-[12px] text-white/60 hover:bg-white/[0.06] hover:text-white/80 transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            Profile
+                        </a>
+                        <div class="border-t border-white/[0.06]">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="flex items-center gap-2.5 w-full px-3.5 py-2.5 text-[12px] text-red-400/80 hover:bg-red-500/10 hover:text-red-400 transition-colors text-left">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                    Sign Out
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -236,14 +243,7 @@
                     <span class="text-white/20 text-sm">/</span>
                     <h2 class="text-white/70 text-sm font-medium">{{ $title ?? 'Dashboard' }}</h2>
                 </div>
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('hub') }}" class="flex items-center gap-1.5 text-white/40 hover:text-white/60 text-xs transition-colors">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"/>
-                        </svg>
-                        Hub
-                    </a>
-                </div>
+                <div class="flex items-center gap-3"></div>
             </header>
 
             {{-- Page Content --}}
@@ -266,5 +266,6 @@
         </div>
     </div>
 
+<x-ui.confirm-modal />
 </body>
 </html>

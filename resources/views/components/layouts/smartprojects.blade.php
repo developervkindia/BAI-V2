@@ -140,18 +140,9 @@ if ($project) {
     </div>
     @endif
 
-    {{-- Footer: Hub + User --}}
+    {{-- Footer: Product Switcher + Hub + User --}}
     <div class="border-t border-white/[0.06] p-2.5 space-y-0.5 shrink-0">
-        <a href="{{ route('hub') }}"
-           class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-medium text-white/38 hover:text-white/65 hover:bg-white/[0.04] transition-colors">
-            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="5" cy="5" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="19" cy="5" r="1.5"/>
-                <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
-                <circle cx="5" cy="19" r="1.5"/><circle cx="12" cy="19" r="1.5"/><circle cx="19" cy="19" r="1.5"/>
-            </svg>
-            BAI Hub
-        </a>
-
+        <x-product-switcher :currentProduct="'projects'" />
         <div x-data="{ open: false }" @click.away="open = false" class="relative">
             <button @click="open = !open"
                     class="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg hover:bg-white/[0.05] transition-colors">
@@ -235,9 +226,6 @@ if ($project) {
                 </a>
             @endforeach
         @endif
-        <a href="{{ route('hub') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-medium text-white/32 hover:text-white/58 hover:bg-white/[0.04] transition-colors mt-3">
-            ⊞ BAI Hub
-        </a>
     </nav>
 </aside>
 
@@ -529,5 +517,6 @@ function createProjectModal() {
 </script>
 
 <x-ui.toast />
+<x-ui.confirm-modal />
 </body>
 </html>

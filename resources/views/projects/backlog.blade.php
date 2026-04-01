@@ -722,29 +722,42 @@ function backlogManager(config) {
             }
         },
 
-        async completeSprint(sprint) {
-            if (!confirm(`Complete "${sprint.name}"? Incomplete tasks will be moved to backlog.`)) return;
-            const result = await this.apiCall('POST', `/api/project-sprints/${sprint.id}/complete`);
-            if (result) {
-                const idx = this.sprints.findIndex(s => s.id === sprint.id);
-                if (idx !== -1) {
-                    // Move incomplete tasks back to backlog
-                    const incomplete = this.sprints[idx].tasks.filter(t => !t.is_completed);
-                    incomplete.forEach(t => this.backlogTasks.push(t));
-                    this.sprints[idx].status = 'completed';
-                    this.sprints[idx].tasks  = this.sprints[idx].tasks.filter(t => t.is_completed);
+        completeSprint(sprint) {
+            this.$dispatch('confirm-modal', {
+                title: 'Complete Sprint',
+                message: `Complete "${sprint.name}"? Incomplete tasks will be moved to backlog.`,
+                confirmLabel: 'Complete',
+                variant: 'warning',
+                onConfirm: async () => {
+                    const result = await this.apiCall('POST', `/api/project-sprints/${sprint.id}/complete`);
+                    if (result) {
+                        const idx = this.sprints.findIndex(s => s.id === sprint.id);
+                        if (idx !== -1) {
+                            const incomplete = this.sprints[idx].tasks.filter(t => !t.is_completed);
+                            incomplete.forEach(t => this.backlogTasks.push(t));
+                            this.sprints[idx].status = 'completed';
+                            this.sprints[idx].tasks  = this.sprints[idx].tasks.filter(t => t.is_completed);
+                        }
+                    }
                 }
-            }
+            });
         },
 
-        async deleteSprint(sprintId) {
-            if (!confirm('Delete this sprint? All tasks will be moved to backlog.')) return;
-            const sprint = this.sprints.find(s => s.id === sprintId);
-            const result = await this.apiCall('DELETE', `/api/project-sprints/${sprintId}`);
-            if (result !== null) {
-                if (sprint) sprint.tasks.forEach(t => this.backlogTasks.push(t));
-                this.sprints = this.sprints.filter(s => s.id !== sprintId);
-            }
+        deleteSprint(sprintId) {
+            this.$dispatch('confirm-modal', {
+                title: 'Delete Sprint',
+                message: 'Delete this sprint? All tasks will be moved to backlog.',
+                confirmLabel: 'Delete',
+                variant: 'danger',
+                onConfirm: async () => {
+                    const sprint = this.sprints.find(s => s.id === sprintId);
+                    const result = await this.apiCall('DELETE', `/api/project-sprints/${sprintId}`);
+                    if (result !== null) {
+                        if (sprint) sprint.tasks.forEach(t => this.backlogTasks.push(t));
+                        this.sprints = this.sprints.filter(s => s.id !== sprintId);
+                    }
+                }
+            });
         },
 
         openEditSprint(sprint) {

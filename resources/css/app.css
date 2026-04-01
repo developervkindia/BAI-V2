@@ -9,6 +9,15 @@
 /* Alpine.js cloak - hide elements before Alpine initializes */
 @layer base {
     [x-cloak] { display: none !important; }
+
+    /* Dark dropdown styling for all select elements */
+    select {
+        color-scheme: dark;
+    }
+    select option {
+        background: #1a1a2e;
+        color: #e0e0e0;
+    }
 }
 
 @theme {

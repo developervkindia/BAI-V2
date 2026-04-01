@@ -136,15 +136,22 @@
                     }
                 },
 
-                async removeMember(member) {
-                    if (!confirm('Remove ' + member.name + ' from this project?')) return;
-                    const r = await fetch('/api/opp/projects/{{ $project->slug }}/members/' + member.id, {
-                        method: 'DELETE',
-                        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }
+                removeMember(member) {
+                    this.$dispatch('confirm-modal', {
+                        title: 'Remove Member',
+                        message: 'Remove ' + member.name + ' from this project?',
+                        confirmLabel: 'Remove',
+                        variant: 'danger',
+                        onConfirm: async () => {
+                            const r = await fetch('/api/opp/projects/{{ $project->slug }}/members/' + member.id, {
+                                method: 'DELETE',
+                                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content }
+                            });
+                            if (r.ok) {
+                                this.members = this.members.filter(m => m.id !== member.id);
+                            }
+                        }
                     });
-                    if (r.ok) {
-                        this.members = this.members.filter(m => m.id !== member.id);
-                    }
                 },
 
                 strColor(s) {
@@ -239,6 +246,21 @@
             </div>
             @endforeach
         </div>
+
+        @if($project->canEdit(auth()->user()))
+        <div class="border-t border-red-500/15 pt-4 mt-4">
+            <h3 class="text-[13px] font-semibold text-red-400/80 mb-1">Danger Zone</h3>
+            <p class="text-[11px] text-white/30 mb-3">Permanently delete this project and all its data.</p>
+            <form method="POST" action="{{ route('opportunity.projects.destroy', $project) }}" x-data x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Delete Project', message: 'Permanently delete &quot;{{ $project->name }}&quot; and all its data? This action cannot be undone.', confirmLabel: 'Delete Project', variant: 'danger', onConfirm: () => $el.submit() })">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-medium text-red-400/70 border border-red-500/15 hover:bg-red-500/10 hover:text-red-400 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    Delete Project
+                </button>
+            </form>
+        </div>
+        @endif
     </div>
 </div>
 

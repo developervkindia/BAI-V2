@@ -44,6 +44,6 @@ class RegisterController extends Controller
             return redirect()->route('boards.show', $boardId);
         }
 
-        return redirect()->route('dashboard');
+        return redirect()->route('hub');
     }
 }

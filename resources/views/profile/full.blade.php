@@ -793,15 +793,22 @@
                     }
                 },
 
-                async deleteEducation(id, index) {
-                    if (!confirm('Delete this education entry?')) return;
-                    try {
-                        await this.apiCall(apiBase + '/educations/' + id, 'DELETE');
-                        this.educations.splice(index, 1);
-                        this.showFlash('Education deleted');
-                    } catch (e) {
-                        this.showFlash(e.message || 'Failed to delete', 'error');
-                    }
+                deleteEducation(id, index) {
+                    this.$dispatch('confirm-modal', {
+                        title: 'Delete Education',
+                        message: 'Delete this education entry?',
+                        confirmLabel: 'Delete',
+                        variant: 'danger',
+                        onConfirm: async () => {
+                            try {
+                                await this.apiCall(apiBase + '/educations/' + id, 'DELETE');
+                                this.educations.splice(index, 1);
+                                this.showFlash('Education deleted');
+                            } catch (e) {
+                                this.showFlash(e.message || 'Failed to delete', 'error');
+                            }
+                        }
+                    });
                 },
 
                 resetNewExperience() {
@@ -830,15 +837,22 @@
                     }
                 },
 
-                async deleteExperience(id, index) {
-                    if (!confirm('Delete this experience entry?')) return;
-                    try {
-                        await this.apiCall(apiBase + '/experiences/' + id, 'DELETE');
-                        this.experiences.splice(index, 1);
-                        this.showFlash('Experience deleted');
-                    } catch (e) {
-                        this.showFlash(e.message || 'Failed to delete', 'error');
-                    }
+                deleteExperience(id, index) {
+                    this.$dispatch('confirm-modal', {
+                        title: 'Delete Experience',
+                        message: 'Delete this experience entry?',
+                        confirmLabel: 'Delete',
+                        variant: 'danger',
+                        onConfirm: async () => {
+                            try {
+                                await this.apiCall(apiBase + '/experiences/' + id, 'DELETE');
+                                this.experiences.splice(index, 1);
+                                this.showFlash('Experience deleted');
+                            } catch (e) {
+                                this.showFlash(e.message || 'Failed to delete', 'error');
+                            }
+                        }
+                    });
                 },
 
                 async uploadDocument() {
@@ -856,15 +870,22 @@
                     }
                 },
 
-                async deleteDocument(id) {
-                    if (!confirm('Delete this document?')) return;
-                    try {
-                        await this.apiCall(apiBase + '/documents/' + id, 'DELETE');
-                        this.documents = this.documents.filter(d => d.id !== id);
-                        this.showFlash('Document deleted');
-                    } catch (e) {
-                        this.showFlash(e.message || 'Failed to delete', 'error');
-                    }
+                deleteDocument(id) {
+                    this.$dispatch('confirm-modal', {
+                        title: 'Delete Document',
+                        message: 'Delete this document?',
+                        confirmLabel: 'Delete',
+                        variant: 'danger',
+                        onConfirm: async () => {
+                            try {
+                                await this.apiCall(apiBase + '/documents/' + id, 'DELETE');
+                                this.documents = this.documents.filter(d => d.id !== id);
+                                this.showFlash('Document deleted');
+                            } catch (e) {
+                                this.showFlash(e.message || 'Failed to delete', 'error');
+                            }
+                        }
+                    });
                 },
 
                 async addSkill() {
@@ -901,15 +922,22 @@
                     }
                 },
 
-                async deleteCertification(id, index) {
-                    if (!confirm('Delete this certification?')) return;
-                    try {
-                        await this.apiCall(apiBase + '/certifications/' + id, 'DELETE');
-                        this.certifications.splice(index, 1);
-                        this.showFlash('Certification deleted');
-                    } catch (e) {
-                        this.showFlash(e.message || 'Failed to delete', 'error');
-                    }
+                deleteCertification(id, index) {
+                    this.$dispatch('confirm-modal', {
+                        title: 'Delete Certification',
+                        message: 'Delete this certification?',
+                        confirmLabel: 'Delete',
+                        variant: 'danger',
+                        onConfirm: async () => {
+                            try {
+                                await this.apiCall(apiBase + '/certifications/' + id, 'DELETE');
+                                this.certifications.splice(index, 1);
+                                this.showFlash('Certification deleted');
+                            } catch (e) {
+                                this.showFlash(e.message || 'Failed to delete', 'error');
+                            }
+                        }
+                    });
                 },
 
                 async changePassword() {

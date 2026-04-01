@@ -226,13 +226,20 @@ function updatesManager() {
             });
             location.reload();
         },
-        async deleteUpdate(id) {
-            if (!confirm('Delete this update?')) return;
-            await fetch('/api/project-weekly-updates/' + id, {
-                method: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+        deleteUpdate(id) {
+            this.$dispatch('confirm-modal', {
+                title: 'Delete Update',
+                message: 'Delete this update? This cannot be undone.',
+                confirmLabel: 'Delete',
+                variant: 'danger',
+                onConfirm: async () => {
+                    await fetch('/api/project-weekly-updates/' + id, {
+                        method: 'DELETE',
+                        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                    });
+                    location.reload();
+                }
             });
-            location.reload();
         },
     };
 }

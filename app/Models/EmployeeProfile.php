@@ -88,4 +88,9 @@ class EmployeeProfile extends Model
     {
         return $this->hasMany(EmployeeSkill::class);
     }
+
+    public function currentSalaryStructure()
+    {
+        return $this->hasOne(HrSalaryStructure::class)->where('is_current', true);
+    }
 }

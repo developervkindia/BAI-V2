@@ -67,7 +67,7 @@
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('super-admin.users.show', $user) }}" class="sa-btn-outline text-xs px-3 py-1.5">View</a>
                                 @if(!$user->is_super_admin && $user->id !== auth()->id())
-                                    <form method="POST" action="{{ route('super-admin.impersonate', $user) }}" onsubmit="return confirm('You will be logged in as {{ $user->name }}. Continue?')">
+                                    <form method="POST" action="{{ route('super-admin.impersonate', $user) }}" x-data x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Impersonate User', message: 'You will be logged in as {{ $user->name }}. Continue?', confirmLabel: 'Continue', variant: 'info', onConfirm: () => $el.submit() })">
                                         @csrf
                                         <button type="submit" class="text-xs px-3 py-1.5 rounded-md border border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/10 transition-colors">
                                             Impersonate

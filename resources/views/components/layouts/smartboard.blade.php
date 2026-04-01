@@ -86,25 +86,12 @@
 
     </nav>
 
-    {{-- BOTTOM: Hub link + User --}}
+    {{-- BOTTOM: Product Switcher + Hub + User --}}
     <div class="border-t border-white/[0.06] p-2.5 space-y-0.5 shrink-0">
-        {{-- Back to Hub --}}
-        <a href="{{ route('hub') }}"
-           class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] font-medium text-white/38 hover:text-white/65 hover:bg-white/[0.04] transition-colors">
-            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="5"  cy="5"  r="1.5"/>
-                <circle cx="12" cy="5"  r="1.5"/>
-                <circle cx="19" cy="5"  r="1.5"/>
-                <circle cx="5"  cy="12" r="1.5"/>
-                <circle cx="12" cy="12" r="1.5"/>
-                <circle cx="19" cy="12" r="1.5"/>
-                <circle cx="5"  cy="19" r="1.5"/>
-                <circle cx="12" cy="19" r="1.5"/>
-                <circle cx="19" cy="19" r="1.5"/>
-            </svg>
-            BAI Hub
-        </a>
+        {{-- Product Switcher --}}
+        <x-product-switcher :currentProduct="'board'" />
 
+        {{-- Back to Hub --}}
         {{-- User --}}
         <div x-data="{ open: false }" @click.away="open = false" class="relative">
             <button @click="open = !open"
@@ -174,10 +161,6 @@
         <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-2.5 py-2.5 rounded-lg text-[13px] font-medium text-white/55 hover:text-white/85 hover:bg-white/[0.05] transition-colors">
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
             Dashboard
-        </a>
-        <a href="{{ route('hub') }}" class="flex items-center gap-2.5 px-2.5 py-2.5 rounded-lg text-[13px] font-medium text-white/40 hover:text-white/70 hover:bg-white/[0.04] transition-colors">
-            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="5" r="1.5"/><circle cx="12" cy="5" r="1.5"/><circle cx="19" cy="5" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="19" r="1.5"/><circle cx="12" cy="19" r="1.5"/><circle cx="19" cy="19" r="1.5"/></svg>
-            BAI Hub
         </a>
     </nav>
 </aside>
@@ -301,5 +284,6 @@ function appNotificationBell() {
 }
 </script>
 
+<x-ui.confirm-modal />
 </body>
 </html>

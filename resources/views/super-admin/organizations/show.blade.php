@@ -27,12 +27,12 @@
             <div class="flex items-center gap-2">
                 <a href="{{ route('super-admin.organizations.index') }}" class="sa-btn-outline">Back to List</a>
                 @if($organization->is_active ?? true)
-                    <form method="POST" action="{{ route('super-admin.organizations.deactivate', $organization) }}" onsubmit="return confirm('Are you sure you want to deactivate this organization?')">
+                    <form method="POST" action="{{ route('super-admin.organizations.deactivate', $organization) }}" x-data x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Deactivate Organization', message: 'Are you sure you want to deactivate this organization?', confirmLabel: 'Deactivate', variant: 'danger', onConfirm: () => $el.submit() })">
                         @csrf
                         <button type="submit" class="sa-btn-red" style="background: linear-gradient(135deg, #dc2626, #991b1b);">Deactivate</button>
                     </form>
                 @else
-                    <form method="POST" action="{{ route('super-admin.organizations.activate', $organization) }}" onsubmit="return confirm('Are you sure you want to activate this organization?')">
+                    <form method="POST" action="{{ route('super-admin.organizations.activate', $organization) }}" x-data x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Activate Organization', message: 'Are you sure you want to activate this organization?', confirmLabel: 'Activate', variant: 'warning', onConfirm: () => $el.submit() })">
                         @csrf
                         <button type="submit" class="sa-btn-red" style="background: linear-gradient(135deg, #22c55e, #16a34a);">Activate</button>
                     </form>

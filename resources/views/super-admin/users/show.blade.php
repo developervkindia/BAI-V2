@@ -25,7 +25,7 @@
             <div class="flex items-center gap-2">
                 <a href="{{ route('super-admin.users.index') }}" class="sa-btn-outline">Back to List</a>
                 @if(!$user->is_super_admin && $user->id !== auth()->id())
-                    <form method="POST" action="{{ route('super-admin.impersonate', $user) }}" onsubmit="return confirm('You will be logged in as {{ $user->name }}. Continue?')">
+                    <form method="POST" action="{{ route('super-admin.impersonate', $user) }}" x-data x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Impersonate User', message: 'You will be logged in as {{ $user->name }}. Continue?', confirmLabel: 'Continue', variant: 'info', onConfirm: () => $el.submit() })">
                         @csrf
                         <button type="submit" class="sa-btn-red">
                             <span class="flex items-center gap-1.5">

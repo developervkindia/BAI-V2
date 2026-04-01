@@ -51,15 +51,29 @@ function recycleBin(config) {
             const r = await fetch(`/api/projects/${config.projectSlug}/recycle-bin/restore`, { method: 'POST', headers, body: JSON.stringify({ type: item.type, id: item.id }) });
             if (r.ok) this.items = this.items.filter(i => !(i.type === item.type && i.id === item.id));
         },
-        async deleteItem(item) {
-            if (!confirm('Permanently delete this item?')) return;
-            const r = await fetch(`/api/projects/${config.projectSlug}/recycle-bin/delete`, { method: 'DELETE', headers, body: JSON.stringify({ type: item.type, id: item.id }) });
-            if (r.ok) this.items = this.items.filter(i => !(i.type === item.type && i.id === item.id));
+        deleteItem(item) {
+            this.$dispatch('confirm-modal', {
+                title: 'Permanently Delete',
+                message: 'Permanently delete this item? This cannot be undone.',
+                confirmLabel: 'Delete Forever',
+                variant: 'danger',
+                onConfirm: async () => {
+                    const r = await fetch(`/api/projects/${config.projectSlug}/recycle-bin/delete`, { method: 'DELETE', headers, body: JSON.stringify({ type: item.type, id: item.id }) });
+                    if (r.ok) this.items = this.items.filter(i => !(i.type === item.type && i.id === item.id));
+                }
+            });
         },
-        async emptyBin() {
-            if (!confirm('Permanently delete ALL items in recycle bin?')) return;
-            await fetch(`/api/projects/${config.projectSlug}/recycle-bin/empty`, { method: 'DELETE', headers });
-            this.items = [];
+        emptyBin() {
+            this.$dispatch('confirm-modal', {
+                title: 'Empty Recycle Bin',
+                message: 'Permanently delete ALL items in recycle bin? This cannot be undone.',
+                confirmLabel: 'Empty Bin',
+                variant: 'danger',
+                onConfirm: async () => {
+                    await fetch(`/api/projects/${config.projectSlug}/recycle-bin/empty`, { method: 'DELETE', headers });
+                    this.items = [];
+                }
+            });
         }
     };
 }

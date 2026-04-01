@@ -193,7 +193,7 @@
                                         </a>
                                         @if(($member->employeeProfiles->first()?->status ?? 'active') === 'active')
                                             <form action="{{ route('users.deactivate', [$organization, $member]) }}" method="POST" class="inline"
-                                                  onsubmit="return confirm('Are you sure you want to deactivate this member?')">
+                                                  x-data x-on:submit.prevent="$dispatch('confirm-modal', { title: 'Deactivate Member', message: 'Are you sure you want to deactivate this member?', confirmLabel: 'Deactivate', variant: 'danger', onConfirm: () => $el.submit() })">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit"
