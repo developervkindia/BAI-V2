@@ -27,7 +27,12 @@ class AppDeftVinnisoftSeeder extends Seeder
 
     private const RAKESH_EMAIL = 'hello@appdeft.ai';
 
-    private const VASUDEV_EMAIL = 'vasudev@gmail.com';
+    /** Must match user-import-template.csv (Vasudev Arora row). */
+    private const VASUDEV_EMAIL = 'vinnisoft.vis@gmail.com';
+
+    private const RAKESH_DEFAULT_PASSWORD = 'rakesh@1234';
+
+    private const VASUDEV_DEFAULT_PASSWORD = 'vasudev@1234';
 
     public function run(): void
     {
@@ -65,14 +70,17 @@ class AppDeftVinnisoftSeeder extends Seeder
             );
         }
 
-        $rakesh = User::where('email', strtolower(self::RAKESH_EMAIL))->first();
-        $vasudev = User::where('email', strtolower(self::VASUDEV_EMAIL))->first();
-
-        if (! $rakesh || ! $vasudev) {
-            $this->command?->error('AppDeftVinnisoftSeeder: Rakesh or Vasudev user missing after CSV import.');
-
-            return;
-        }
+        // Owners must exist even if CSV omits them, uses different casing in DB, or deployed CSV differs.
+        $rakesh = $this->ensureOrgOwner(
+            self::RAKESH_EMAIL,
+            'Rakesh Kumar',
+            self::RAKESH_DEFAULT_PASSWORD
+        );
+        $vasudev = $this->ensureOrgOwner(
+            self::VASUDEV_EMAIL,
+            'Vasudev Arora',
+            self::VASUDEV_DEFAULT_PASSWORD
+        );
 
         $appdeft = $this->ensureOrganization('AppDeft', $rakesh, $productAccess, $onboarding);
         $vinnisoft = $this->ensureOrganization('Vinnisoft', $vasudev, $productAccess, $onboarding);
@@ -91,7 +99,7 @@ class AppDeftVinnisoftSeeder extends Seeder
             }
 
             $org = $orgKey === 'appdeft' ? $appdeft : $vinnisoft;
-            $user = User::where('email', $email)->first();
+            $user = $this->findUserByEmailInsensitive($email);
             if (! $user) {
                 continue;
             }
@@ -177,6 +185,28 @@ class AppDeftVinnisoftSeeder extends Seeder
         $e = str_replace(["\t", "\r", '%09'], '', $raw);
 
         return strtolower(trim($e));
+    }
+
+    private function findUserByEmailInsensitive(string $email): ?User
+    {
+        return User::whereRaw('LOWER(email) = ?', [strtolower(trim($email))])->first();
+    }
+
+    private function ensureOrgOwner(string $email, string $name, string $defaultPassword): User
+    {
+        $normalized = strtolower(trim($email));
+        $existing = $this->findUserByEmailInsensitive($normalized);
+        if ($existing) {
+            return $existing;
+        }
+
+        $this->command?->warn("AppDeftVinnisoftSeeder: creating org owner {$normalized} (not in CSV or DB yet).");
+
+        return User::create([
+            'email' => $normalized,
+            'name' => $name,
+            'password' => Hash::make($defaultPassword),
+        ]);
     }
 
     private function resolveOrgKey(string $email): ?string
