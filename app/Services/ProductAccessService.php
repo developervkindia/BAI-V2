@@ -80,6 +80,27 @@ class ProductAccessService
     }
 
     /**
+     * Subscribe the org to every catalog product on the enterprise tier so plan-based
+     * feature gates (see config/plans.php) allow full functionality.
+     */
+    public function provisionEnterpriseForOrg(Organization $org): void
+    {
+        foreach (Product::query()->orderBy('sort_order')->get() as $product) {
+            $org->subscriptions()->updateOrCreate(
+                ['product_id' => $product->id],
+                [
+                    'plan' => 'enterprise',
+                    'status' => 'active',
+                    'starts_at' => now(),
+                    'ends_at' => null,
+                ]
+            );
+        }
+
+        $this->clearCacheForOrg($org);
+    }
+
+    /**
      * Bust the cache when subscriptions change.
      */
     public function clearCacheForUser(User $user): void
@@ -93,6 +114,15 @@ class ProductAccessService
      */
     public function clearCacheForOrg(Organization $org): void
     {
+        $org->loadMissing('members');
+
         $org->members->each(fn ($member) => $this->clearCacheForUser($member));
+
+        if ($org->owner_id) {
+            $owner = User::query()->find($org->owner_id);
+            if ($owner) {
+                $this->clearCacheForUser($owner);
+            }
+        }
     }
 }

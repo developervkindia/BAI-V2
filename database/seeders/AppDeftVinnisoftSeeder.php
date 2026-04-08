@@ -117,17 +117,22 @@ class AppDeftVinnisoftSeeder extends Seeder
             }
         }
 
+        // Enterprise subscriptions + full RBAC for AppDeft / Vinnisoft (plan unlocks + all permissions on owner/admin).
+        foreach ([$appdeft, $vinnisoft] as $org) {
+            $productAccess->provisionEnterpriseForOrg($org);
+            PermissionSeeder::seedRolesForOrg($org);
+        }
+        $onboarding->provisionMember($appdeft, $rakesh, 'owner');
+        $onboarding->provisionMember($vinnisoft, $vasudev, 'owner');
+
         $appdeftMembers = $appdeft->members()->get();
         if (! $appdeftMembers->contains('id', $rakesh->id)) {
             $appdeftMembers->push($rakesh);
         }
-        $this->seedDemoProject(
+        (new AppDeftRichProjectsSeeder)->runFor(
             $appdeft,
             $rakesh,
-            $appdeftMembers->unique('id')->values(),
-            'Delivery — Client Portal',
-            'Roadmap, sprints, and tasks for the AppDeft client portal initiative.',
-            '#4F46E5'
+            $appdeftMembers->unique('id')->values()
         );
 
         $vinnisoftMembers = $vinnisoft->members()->get();
@@ -143,7 +148,7 @@ class AppDeftVinnisoftSeeder extends Seeder
             '#0D9488'
         );
 
-        $this->command?->info('AppDeftVinnisoftSeeder finished: 2 orgs, CSV users, 2 demo projects.');
+        $this->command?->info('AppDeftVinnisoftSeeder finished: 2 orgs, CSV users; AppDeft has rich fixed + billing projects; Vinnisoft has one demo project.');
     }
 
     private function readCsv(string $path): Collection

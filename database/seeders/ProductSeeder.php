@@ -43,7 +43,7 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Customer support & smart ticketing',
                 'color' => 'violet',
                 'route_prefix' => 'desk',
-                'is_available' => false,
+                'is_available' => true,
                 'sort_order' => 4,
             ],
             [
@@ -52,7 +52,7 @@ class ProductSeeder extends Seeder
                 'tagline' => 'Contacts, pipelines & revenue automation',
                 'color' => 'emerald',
                 'route_prefix' => 'crm',
-                'is_available' => false,
+                'is_available' => true,
                 'sort_order' => 5,
             ],
             [
