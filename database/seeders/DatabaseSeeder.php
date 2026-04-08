@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             'is_super_admin' => true,
         ]);
 
+        $this->call(AppDeftVinnisoftSeeder::class);
         $this->call(KnowledgeBaseDemoSeeder::class);
     }
 }
