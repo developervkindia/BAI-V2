@@ -23,21 +23,19 @@ $views = [
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="h-full antialiased font-sans overflow-hidden bg-[#0F0F18]" x-data="{ mobileSidebarOpen: false }">
+<x-impersonation-banner />
 
 {{-- ============================================================ --}}
 {{-- SIDEBAR (same as smartboard layout)                           --}}
 {{-- ============================================================ --}}
 <aside class="fixed inset-y-0 left-0 w-[220px] bg-[#0B0B14] flex flex-col z-30 border-r border-white/[0.06] hidden lg:flex">
     {{-- Product header — BAI Board --}}
-    <div class="relative bg-gradient-to-br from-[#1e1b4b] via-[#3730a3] to-[#4f46e5] px-4 py-3.5 flex items-center gap-2.5 shrink-0 overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-b from-white/[0.14] to-transparent pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-white/0 via-white/20 to-white/0"></div>
-        <div class="w-7 h-7 rounded-lg bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
-            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L4.09 12.97H11L10 22l8.91-10.97H13L14 2z"/></svg>
-        </div>
-        <div>
-            <span class="text-[13px] font-bold text-white leading-none tracking-tight">BAI Board</span>
-            <span class="block text-[9px] text-white/55 font-medium tracking-wider uppercase leading-none mt-0.5">Kanban & Boards</span>
+    <div class="shrink-0 border-b border-white/[0.06]">
+        <a href="{{ route('hub') }}" class="block px-3 pt-3 pb-1">
+            <img src="{{ asset('images/bai-logo-nav.svg') }}" alt="BAI" class="w-full h-auto">
+        </a>
+        <div class="px-3 pb-2.5">
+            <span class="text-[10px] font-semibold text-indigo-400/80 tracking-wider uppercase">Board &middot; Kanban</span>
         </div>
     </div>
 
@@ -201,11 +199,10 @@ $views = [
 {{-- Mobile sidebar --}}
 <div x-show="mobileSidebarOpen" style="display:none" @click="mobileSidebarOpen = false" class="fixed inset-0 bg-black/60 z-40 lg:hidden"></div>
 <aside x-show="mobileSidebarOpen" style="display:none" class="fixed inset-y-0 left-0 w-[280px] bg-[#0B0B14] border-r border-white/[0.06] flex flex-col z-50 lg:hidden">
-    <div class="relative bg-gradient-to-br from-[#1e1b4b] via-[#3730a3] to-[#4f46e5] px-4 py-3.5 flex items-center justify-between overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-b from-white/[0.14] to-transparent pointer-events-none"></div>
-        <div class="flex items-center gap-2.5 relative">
-            <div class="w-7 h-7 rounded-lg bg-white/15 border border-white/20 flex items-center justify-center"><svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L4.09 12.97H11L10 22l8.91-10.97H13L14 2z"/></svg></div>
-            <span class="text-[14px] font-bold text-white">BAI Board</span>
+    <div class="px-3 pt-3 pb-2 flex items-center justify-between border-b border-white/[0.06]">
+        <div class="flex-1 min-w-0">
+            <img src="{{ asset('images/bai-logo-nav.svg') }}" alt="BAI" class="w-[180px] h-auto">
+            <span class="text-[10px] font-semibold text-indigo-400/80 tracking-wider uppercase mt-1 block">Board &middot; Kanban</span>
         </div>
         <button @click="mobileSidebarOpen = false" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/80">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>

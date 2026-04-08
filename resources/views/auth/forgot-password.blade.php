@@ -1,45 +1,69 @@
 <x-layouts.guest title="Forgot Password">
-    <div class="min-h-full flex items-center justify-center p-8">
-        <div class="w-full max-w-md space-y-8">
-            <div class="text-center">
-                <div class="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+    <div class="auth-wrapper" x-data="{ loading: false }">
+        <div class="auth-card">
+            <!-- Logo -->
+            <div class="auth-logo">
+                <a href="{{ route('home') }}">
+                    <img src="{{ asset('images/bai-logo-nav.svg') }}" alt="BAI">
+                </a>
+            </div>
+
+            <!-- Icon + Heading -->
+            <div style="text-align: center; margin-bottom: 1.75rem;">
+                <div style="width: 56px; height: 56px; border-radius: 16px; background: var(--auth-gradient); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;">
+                    <svg style="width: 28px; height: 28px; color: #fff;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
                 </div>
-                <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white font-heading tracking-tight">Forgot your password?</h1>
-                <p class="mt-2 text-gray-500 dark:text-gray-400">No worries! Enter your email and we'll send you a reset link.</p>
+                <h1 class="auth-title">Forgot your password?</h1>
+                <p class="auth-subtitle" style="margin-bottom: 0;">No worries! Enter your email and we'll send you a reset link.</p>
             </div>
 
             @if(session('status'))
-                <div class="bg-success-50 text-success-700 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
-                    <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    {{ session('status') }}
+                <div class="auth-alert auth-alert-success">
+                    <div class="auth-alert-icon" style="background: rgba(16,185,129,0.15);">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <span>{{ session('status') }}</span>
                 </div>
             @endif
 
             @if($errors->has('email'))
-                <div class="bg-danger-50 border border-danger-200 text-danger-700 px-4 py-3 rounded-xl text-sm">
-                    <p class="font-medium">{{ $errors->first('email') }}</p>
-                    @if(Str::contains($errors->first('email'), "can't find"))
-                        <p class="mt-2 text-danger-600">Don't have an account yet?
-                            <a href="{{ route('register') }}" class="font-bold underline hover:text-danger-800">Sign up here</a>
-                        </p>
-                    @endif
+                <div class="auth-alert auth-alert-error">
+                    <div class="auth-alert-icon" style="background: rgba(239,68,68,0.15);">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <span>{{ $errors->first('email') }}</span>
+                        @if(Str::contains($errors->first('email'), "can't find"))
+                            <p style="margin-top: 4px; font-size: 0.8rem;">
+                                Don't have an account? <a href="{{ route('register') }}" class="auth-link" style="font-weight: 700;">Sign up here</a>
+                            </p>
+                        @endif
+                    </div>
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('password.email') }}" class="space-y-5">
+            <form method="POST" action="{{ route('password.email') }}" @submit="loading = true">
                 @csrf
-                <x-ui.input label="Email address" type="email" name="email" :value="old('email')" required autofocus placeholder="you@example.com" />
-                <x-ui.button type="submit" variant="primary" size="lg" class="w-full">Send Reset Link</x-ui.button>
+
+                <div class="auth-field">
+                    <label for="email" class="auth-label">Email address</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
+                        class="auth-input" placeholder="you@example.com">
+                </div>
+
+                <button type="submit" class="auth-submit" :class="loading && 'is-loading'" :disabled="loading">
+                    <span x-show="!loading">Send Reset Link</span>
+                    <span x-show="loading" x-cloak><span class="auth-spinner"></span> Sending...</span>
+                </button>
             </form>
 
-            <div class="text-center space-y-3">
-                <a href="{{ route('login') }}" class="text-primary-600 hover:text-primary-700 font-semibold flex items-center justify-center gap-1 text-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            <div style="text-align: center; margin-top: 1.75rem;">
+                <a href="{{ route('login') }}" class="auth-link" style="display: inline-flex; align-items: center; gap: 0.375rem;">
+                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     Back to sign in
                 </a>
-                <p class="text-sm text-gray-400">
-                    Don't have an account? <a href="{{ route('register') }}" class="text-primary-600 hover:text-primary-700 font-semibold">Sign up free</a>
+                <p class="auth-footer" style="margin-top: 0.75rem;">
+                    Don't have an account? <a href="{{ route('register') }}">Sign up free</a>
                 </p>
             </div>
         </div>

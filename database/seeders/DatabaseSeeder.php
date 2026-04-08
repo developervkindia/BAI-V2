@@ -13,10 +13,12 @@ class DatabaseSeeder extends Seeder
         $this->call(PermissionSeeder::class);
 
         User::create([
-            'name'           => 'Super Admin',
-            'email'          => 'superadmin@bai.com',
-            'password'       => bcrypt('12345678'),
+            'name' => 'Super Admin',
+            'email' => 'superadmin@bai.com',
+            'password' => bcrypt('12345678'),
             'is_super_admin' => true,
         ]);
+
+        $this->call(KnowledgeBaseDemoSeeder::class);
     }
 }

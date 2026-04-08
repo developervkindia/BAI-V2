@@ -31,22 +31,12 @@ if ($project) {
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         (function() {
-            var t = localStorage.getItem('sp-theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', t);
+            document.documentElement.setAttribute('data-theme', 'dark');
         })();
     </script>
 </head>
 <body class="h-full antialiased font-sans bg-[#0D0D18]"
-      x-data="{
-          mobileSidebarOpen: false,
-          showCreateProject: false,
-          theme: localStorage.getItem('sp-theme') || 'dark',
-          toggleTheme() {
-              this.theme = this.theme === 'dark' ? 'light' : 'dark';
-              localStorage.setItem('sp-theme', this.theme);
-              document.documentElement.setAttribute('data-theme', this.theme);
-          }
-      }">
+      x-data="{ mobileSidebarOpen: false, showCreateProject: false }">
 
 {{-- ================================================================ --}}
 {{-- SIDEBAR                                                           --}}
@@ -54,17 +44,12 @@ if ($project) {
 <aside class="fixed inset-y-0 left-0 w-[220px] bg-[#0B0B12] flex flex-col z-30 border-r border-white/[0.06] hidden lg:flex">
 
     {{-- Product header — BAI Projects --}}
-    <div class="relative bg-gradient-to-br from-[#7c2d12] via-[#c2410c] to-[#ea580c] px-4 py-3.5 flex items-center gap-2.5 shrink-0 overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-b from-white/[0.14] to-transparent pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-white/0 via-white/20 to-white/0"></div>
-        <div class="w-7 h-7 rounded-lg bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
-            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-            </svg>
-        </div>
-        <div>
-            <span class="text-[13px] font-bold text-white leading-none tracking-tight">BAI Projects</span>
-            <span class="block text-[9px] text-white/55 font-medium tracking-wider uppercase leading-none mt-0.5">Project Management</span>
+    <div class="shrink-0 border-b border-white/[0.06]">
+        <a href="{{ route('hub') }}" class="block px-3 pt-3 pb-1">
+            <img src="{{ asset('images/bai-logo-nav.svg') }}" alt="BAI" class="w-full h-auto">
+        </a>
+        <div class="px-3 pb-2.5">
+            <span class="text-[10px] font-semibold text-orange-400/80 tracking-wider uppercase">Projects &middot; Management</span>
         </div>
     </div>
 
@@ -80,14 +65,20 @@ if ($project) {
             All Projects
         </a>
 
-        {{-- Clients --}}
-        <a href="{{ route('clients.index') }}"
-           class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors {{ request()->routeIs('clients.*') ? 'bg-orange-500/15 text-orange-300' : 'text-white/50 hover:text-white/80 hover:bg-white/[0.05]' }}">
+        {{-- Clients (org-scoped CRM) --}}
+        @php
+            $crmOrg = auth()->user()?->currentOrganization();
+            $canViewClients = $crmOrg && app(\App\Services\PermissionService::class)->userCan(auth()->user(), 'org.clients.view', $crmOrg);
+        @endphp
+        @if($canViewClients)
+        <a href="{{ route('org.clients.index', $crmOrg) }}"
+           class="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors {{ request()->routeIs('org.clients.*') ? 'bg-orange-500/15 text-orange-300' : 'text-white/50 hover:text-white/80 hover:bg-white/[0.05]' }}">
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
             </svg>
             Clients
         </a>
+        @endif
 
         {{-- Project list --}}
         @if(isset($sidebarProjects) && $sidebarProjects->count() > 0)
@@ -120,25 +111,6 @@ if ($project) {
         @endif
 
     </nav>
-
-    {{-- Admin links --}}
-    @if(isset($currentOrganization) && $currentOrganization->isAdmin(auth()->user()))
-    <div class="border-t border-white/[0.06] px-2.5 pt-2 pb-0.5 space-y-0.5">
-        <div class="px-2.5 pb-1 pt-1">
-            <span class="text-[10px] font-semibold text-white/18 uppercase tracking-widest">Admin</span>
-        </div>
-        <a href="{{ route('users.index', $currentOrganization) }}"
-           class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-[12px] font-medium text-white/35 hover:text-white/65 hover:bg-white/[0.04] transition-colors">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-            Users
-        </a>
-        <a href="{{ route('roles.index', $currentOrganization) }}"
-           class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-[12px] font-medium text-white/35 hover:text-white/65 hover:bg-white/[0.04] transition-colors">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-            Roles
-        </a>
-    </div>
-    @endif
 
     {{-- Footer: Product Switcher + Hub + User --}}
     <div class="border-t border-white/[0.06] p-2.5 space-y-0.5 shrink-0">
@@ -193,11 +165,9 @@ if ($project) {
        class="fixed inset-y-0 left-0 w-[280px] bg-[#0B0B12] border-r border-white/[0.06] flex flex-col z-50 lg:hidden">
     <div class="relative bg-gradient-to-br from-[#7c2d12] via-[#c2410c] to-[#ea580c] px-4 py-3.5 flex items-center justify-between overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-b from-white/[0.14] to-transparent pointer-events-none"></div>
-        <div class="flex items-center gap-2.5 relative">
-            <div class="w-7 h-7 rounded-lg bg-white/15 border border-white/20 flex items-center justify-center">
-                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-            </div>
-            <span class="text-[14px] font-bold text-white">BAI Projects</span>
+        <div class="flex-1 min-w-0 relative">
+            <img src="{{ asset('images/bai-logo-nav.svg') }}" alt="BAI" class="w-[180px] h-auto">
+            <span class="text-[10px] font-semibold text-orange-400/80 tracking-wider uppercase mt-1 block">Projects</span>
         </div>
         <button @click="mobileSidebarOpen = false" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/80 relative">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -250,30 +220,32 @@ if ($project) {
                 </a>
                 <span class="text-white/15 shrink-0">/</span>
                 <span class="text-white/70 font-medium truncate">{{ $project->name }}</span>
+            @elseif(request()->routeIs('org.clients.*'))
+                @php $spOrg = auth()->user()?->currentOrganization(); @endphp
+                <span class="text-white/45 truncate">{{ $spOrg?->name ?? 'Organization' }}</span>
+                <span class="text-white/15 shrink-0">/</span>
+                <span class="text-white/70 font-medium shrink-0">Clients</span>
             @else
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 min-w-0">
                     <svg class="w-3.5 h-3.5 text-white/35 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                    <span class="text-white/70 font-medium">Projects</span>
+                    <span class="text-white/70 font-medium truncate">Projects</span>
                 </div>
             @endif
         </div>
 
-        {{-- Theme toggle --}}
-        <button @click="toggleTheme()"
-                class="p-2 rounded-lg text-white/40 hover:text-white/65 hover:bg-white/[0.07] transition-colors shrink-0"
-                :title="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
-            {{-- Sun icon (shown in dark mode) --}}
-            <svg x-show="theme === 'dark'" x-cloak class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-            </svg>
-            {{-- Moon icon (shown in light mode) --}}
-            <svg x-show="theme === 'light'" x-cloak class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-            </svg>
-        </button>
+        @if(session('super_admin_impersonating'))
+            <form method="POST" action="{{ route('super-admin.stop-impersonating') }}" class="flex items-center shrink-0">
+                @csrf
+                <button type="submit"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-red-500/15 border border-red-500/25 text-red-400 hover:bg-red-500/25 hover:text-red-300 transition-colors">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    Stop Impersonating
+                </button>
+            </form>
+        @endif
 
         {{-- Right actions (only shown on index) --}}
-        @if(!$project)
+        @if(!$project && !request()->routeIs('org.clients.*'))
             <button @click="showCreateProject = true"
                     class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[12px] font-semibold text-white bg-orange-500 hover:bg-orange-400 transition-colors shrink-0">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>

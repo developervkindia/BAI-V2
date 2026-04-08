@@ -15,14 +15,25 @@
     </style>
 </head>
 <body class="h-full antialiased font-sans bg-[#1A1A2E]" x-data="{ mobileSidebarOpen: false }">
+<x-impersonation-banner />
 
 {{-- ================================================================ --}}
 {{-- SIDEBAR (Asana-style: dark, clean, grouped sections)             --}}
 {{-- ================================================================ --}}
 <aside class="fixed inset-y-0 left-0 w-[240px] bg-[#111122] flex flex-col z-30 border-r border-white/[0.06] hidden lg:flex">
 
+    {{-- Product header — Opportunity --}}
+    <div class="shrink-0 border-b border-white/[0.06]">
+        <a href="{{ route('hub') }}" class="block px-3 pt-3 pb-1">
+            <img src="{{ asset('images/bai-logo-nav.svg') }}" alt="BAI" class="w-full h-auto">
+        </a>
+        <div class="px-3 pb-2.5">
+            <span class="text-[10px] font-semibold text-teal-400/80 tracking-wider uppercase">Opportunity &middot; Tasks & Goals</span>
+        </div>
+    </div>
+
     {{-- Create button --}}
-    <div class="px-3 pt-4 pb-2">
+    <div class="px-3 pt-3 pb-2">
         <button onclick="window.dispatchEvent(new CustomEvent('opp-create-task'))"
                 class="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-gradient-to-r from-teal-500 to-teal-400 text-white text-[13px] font-semibold hover:from-teal-400 hover:to-teal-300 transition-all shadow-lg shadow-teal-500/20">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
@@ -98,16 +109,6 @@
             @endforeach
         @endif
 
-        {{-- Teams section --}}
-        <div class="pt-3 pb-1 px-3">
-            <span class="text-[11px] font-semibold text-white/25 uppercase tracking-wider">Teams</span>
-        </div>
-        @php $currentOrg = auth()->user()->currentOrganization(); @endphp
-        <a href="{{ $currentOrg ? route('organizations.show', $currentOrg) : '#' }}" class="flex items-center gap-2.5 px-3 py-[6px] rounded-lg text-[13px] font-medium text-white/45 hover:bg-white/[0.04] hover:text-white/70 transition-colors">
-            <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            {{ $currentOrg?->name ?? 'My Team' }}
-            <svg class="w-3 h-3 ml-auto text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-        </a>
     </nav>
 
     {{-- Footer --}}

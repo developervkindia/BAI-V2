@@ -122,7 +122,7 @@
             @if($project->client)
             <div class="bg-[#111120] border border-white/[0.07] rounded-2xl p-5">
                 <div class="text-[11px] font-semibold text-white/25 uppercase tracking-widest mb-3">Client</div>
-                <a href="{{ route('clients.show', $project->client) }}" class="flex items-center gap-3 group">
+                <a href="{{ route('org.clients.show', [$project->organization, $project->client]) }}" class="flex items-center gap-3 group">
                     <div class="w-9 h-9 rounded-xl bg-orange-500/15 text-orange-400 text-sm font-bold flex items-center justify-center shrink-0">
                         {{ strtoupper(substr($project->client->name, 0, 1)) }}
                     </div>

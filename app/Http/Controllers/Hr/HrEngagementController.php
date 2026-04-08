@@ -15,7 +15,7 @@ class HrEngagementController extends Controller
         $organization = auth()->user()->currentOrganization();
 
         $announcements = HrAnnouncement::where('organization_id', $organization->id)
-            ->where('is_active', true)
+            ->orderBy('is_pinned', 'desc')
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();

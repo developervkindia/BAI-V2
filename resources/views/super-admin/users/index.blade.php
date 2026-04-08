@@ -1,10 +1,42 @@
 <x-layouts.super-admin title="Users">
 
     {{-- Page Header --}}
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-6" x-data="{ showInvite: false }">
         <div>
-            <h1 class="text-xl font-bold text-white">Users</h1>
-            <p class="text-sm text-white/40 mt-0.5">Manage all platform users</p>
+            <h1 class="text-xl font-bold text-white">Organization Admins</h1>
+            <p class="text-sm text-white/40 mt-0.5">Users who registered and manage organizations</p>
+        </div>
+        <button @click="showInvite = true" class="sa-btn-red flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Invite User
+        </button>
+
+        {{-- Invite Modal --}}
+        <div x-show="showInvite" x-cloak class="fixed inset-0 z-[60] flex items-center justify-center p-4" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);">
+            <div @click.away="showInvite = false" class="sa-card w-full max-w-md p-6" x-transition>
+                <div class="flex items-center justify-between mb-5">
+                    <h3 class="text-lg font-bold text-white">Invite User</h3>
+                    <button @click="showInvite = false" class="text-white/30 hover:text-white/60 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <form method="POST" action="{{ route('super-admin.invite') }}" class="space-y-4">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-medium text-white/50 mb-1.5">Email Address *</label>
+                        <input type="email" name="email" required placeholder="user@example.com" class="sa-input w-full">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-white/50 mb-1.5">Promo Code (optional)</label>
+                        <input type="text" name="promo_code" placeholder="e.g. PRO2026" class="sa-input w-full">
+                        <p class="text-[11px] text-white/25 mt-1">If provided, the user can enter this code to get Pro plan for free.</p>
+                    </div>
+                    <div class="flex items-center justify-end gap-3 pt-2">
+                        <button type="button" @click="showInvite = false" class="sa-btn-outline">Cancel</button>
+                        <button type="submit" class="sa-btn-red">Send Invitation</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -60,7 +92,7 @@
                             @if($user->is_super_admin)
                                 <span class="sa-badge sa-badge-red">Super Admin</span>
                             @else
-                                <span class="sa-badge sa-badge-gray">User</span>
+                                <span class="sa-badge sa-badge-gray">Org Admin</span>
                             @endif
                         </td>
                         <td>

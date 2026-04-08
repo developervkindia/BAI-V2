@@ -27,7 +27,7 @@ class LoginController extends Controller
             $user = auth()->user();
 
             if ($user->is_super_admin) {
-                return redirect()->intended(route('super-admin.dashboard'));
+                return redirect()->route('super-admin.dashboard');
             }
 
             // Process pending invitation — returns board ID if any

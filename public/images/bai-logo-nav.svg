@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 60" fill="none">
+  <defs>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#d946ef"/>
+    </linearGradient>
+    <linearGradient id="lightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#c084fc"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Icon Mark (scaled to fit 60px height) -->
+  <g transform="translate(2, 2) scale(0.56)">
+    <path d="M52 4L96 28V76L52 100L8 76V28L52 4Z" fill="url(#brandGrad)" opacity="0.12"/>
+    <path d="M52 4L96 28V76L52 100L8 76V28L52 4Z" stroke="url(#brandGrad)" stroke-width="2.5" fill="none"/>
+    <path d="M52 22L78 42V62L52 82L26 62V42L52 22Z" fill="url(#brandGrad)" opacity="0.25"/>
+    <g stroke="url(#lightGrad)" stroke-width="2.2" stroke-linecap="round" fill="none" filter="url(#glow)">
+      <path d="M34 52C38 42 46 36 52 36"/>
+      <path d="M70 52C66 42 58 36 52 36"/>
+      <path d="M34 52C38 62 46 68 52 68"/>
+      <path d="M70 52C66 62 58 68 52 68"/>
+    </g>
+    <circle cx="52" cy="52" r="5" fill="url(#brandGrad)"/>
+    <circle cx="52" cy="52" r="2.5" fill="white" opacity="0.9"/>
+    <circle cx="52" cy="22" r="3" fill="url(#brandGrad)"/>
+    <circle cx="78" cy="42" r="3" fill="url(#brandGrad)"/>
+    <circle cx="78" cy="62" r="3" fill="url(#brandGrad)"/>
+    <circle cx="52" cy="82" r="3" fill="url(#brandGrad)"/>
+    <circle cx="26" cy="62" r="3" fill="url(#brandGrad)"/>
+    <circle cx="26" cy="42" r="3" fill="url(#brandGrad)"/>
+    <g stroke="url(#brandGrad)" stroke-width="1" opacity="0.35">
+      <line x1="52" y1="52" x2="52" y2="22"/>
+      <line x1="52" y1="52" x2="78" y2="42"/>
+      <line x1="52" y1="52" x2="78" y2="62"/>
+      <line x1="52" y1="52" x2="52" y2="82"/>
+      <line x1="52" y1="52" x2="26" y2="62"/>
+      <line x1="52" y1="52" x2="26" y2="42"/>
+    </g>
+  </g>
+
+  <!-- BAI Wordmark -->
+  <g transform="translate(68, 8)">
+    <!-- B -->
+    <path d="M0 0H22C30 0 36 3.5 36 10.5C36 15 33 18 29 19.5C34 21 37 25 37 30.5C37 38.5 31 42.5 22 42.5H0V0ZM11 17H20.5C24 17 26.5 15 26.5 12C26.5 9 24 7 20.5 7H11V17ZM11 35.5H21C25 35.5 28 33 28 29.5C28 26 25 23.5 21 23.5H11V35.5Z"
+          fill="url(#brandGrad)"/>
+
+    <!-- A -->
+    <path d="M68.5 0L93 42.5H81L77 31H60L56 42.5H44L68.5 0Z M62.5 24H74.5L68.5 8.5L62.5 24Z"
+          fill="url(#brandGrad)" fill-rule="evenodd"/>
+
+    <!-- I -->
+    <path d="M99 0H111V42.5H99V0Z" fill="url(#brandGrad)"/>
+    <rect x="99" y="0" width="12" height="2.5" rx="1.25" fill="url(#lightGrad)"/>
+  </g>
+</svg>

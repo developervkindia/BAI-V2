@@ -18,7 +18,7 @@ class OrganizationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
         ]);
 
@@ -29,6 +29,15 @@ class OrganizationController extends Controller
         return redirect()->route('hub')->with('success', 'Organization created! Welcome to SmartSuite.');
     }
 
+    public function manage(Organization $organization)
+    {
+        abort_unless($organization->isAdmin(auth()->user()), 403);
+
+        return view('organizations.manage', [
+            'organization' => $organization,
+        ]);
+    }
+
     public function show(Organization $organization)
     {
         abort_unless($organization->hasUser(auth()->user()), 403);
@@ -36,8 +45,8 @@ class OrganizationController extends Controller
         $organization->load(['members', 'workspaces', 'subscriptions.product']);
 
         return view('organizations.show', [
-            'organization'  => $organization,
-            'workspaces'    => $organization->workspaces,
+            'organization' => $organization,
+            'workspaces' => $organization->workspaces,
             'productConfig' => config('products'),
         ]);
     }
@@ -47,7 +56,7 @@ class OrganizationController extends Controller
         abort_unless($organization->isAdmin(auth()->user()), 403);
 
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
         ]);
 

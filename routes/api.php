@@ -525,4 +525,23 @@ Route::middleware(['web', 'auth', 'throttle:api'])->group(function () {
     Route::delete('/webhooks/{webhook}',                      [WebhookController::class, 'destroy']);
     Route::get('/webhooks/{webhook}/logs',                    [WebhookController::class, 'logs']);
     Route::post('/webhooks/{webhook}/test',                   [WebhookController::class, 'test']);
+
+    // ── BAI Docs API ─────────────────────────────────────────────
+    Route::middleware('product.access:docs')->prefix('docs')->group(function () {
+        // Document CRUD & auto-save
+        Route::post('/documents',                        [\App\Http\Controllers\Api\DocDocumentApiController::class, 'store']);
+        Route::put('/documents/{document}/auto-save',    [\App\Http\Controllers\Api\DocDocumentApiController::class, 'autoSave']);
+        Route::delete('/documents/{document}',           [\App\Http\Controllers\Api\DocDocumentApiController::class, 'destroy']);
+        Route::post('/documents/{document}/restore',     [\App\Http\Controllers\Api\DocDocumentApiController::class, 'restore']);
+        Route::post('/documents/{document}/duplicate',   [\App\Http\Controllers\Api\DocDocumentApiController::class, 'duplicate']);
+        Route::post('/documents/{document}/move',        [\App\Http\Controllers\Api\DocDocumentApiController::class, 'move']);
+        Route::post('/documents/{document}/star',        [\App\Http\Controllers\Api\DocDocumentApiController::class, 'toggleStar']);
+        Route::delete('/documents/{trashedId}/force',    [\App\Http\Controllers\Api\DocDocumentApiController::class, 'forceDestroy']);
+
+        // Folders
+        Route::post('/folders',              [\App\Http\Controllers\Api\DocFolderApiController::class, 'store']);
+        Route::put('/folders/{folder}',      [\App\Http\Controllers\Api\DocFolderApiController::class, 'update']);
+        Route::delete('/folders/{folder}',   [\App\Http\Controllers\Api\DocFolderApiController::class, 'destroy']);
+        Route::get('/folders/tree',          [\App\Http\Controllers\Api\DocFolderApiController::class, 'tree']);
+    });
 });

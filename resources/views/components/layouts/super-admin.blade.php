@@ -122,39 +122,18 @@
 </head>
 <body class="antialiased min-h-screen" style="background: #0A0A14;">
 
-    {{-- Impersonation Banner --}}
-    @if(session('super_admin_impersonating'))
-    <div class="fixed top-0 left-0 right-0 z-[100] flex items-center justify-center gap-3 px-4 py-2" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
-        <svg class="w-4 h-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <span class="text-white text-sm font-medium">
-            Impersonating <strong>{{ session('impersonated_user_name', 'Unknown User') }}</strong>
-        </span>
-        <form method="POST" action="{{ route('super-admin.stop-impersonating') }}" class="inline">
-            @csrf
-            <button type="submit" class="ml-2 px-3 py-0.5 bg-white/20 hover:bg-white/30 text-white text-xs font-medium rounded-full transition-colors">
-                Stop Impersonating
-            </button>
-        </form>
-    </div>
-    @endif
+    <x-impersonation-banner />
 
     <div class="flex min-h-screen" @if(session('super_admin_impersonating')) style="padding-top: 36px;" @endif>
         {{-- Sidebar --}}
         <aside class="sa-sidebar fixed top-0 left-0 bottom-0 w-[220px] flex flex-col border-r border-white/[0.06] z-50" @if(session('super_admin_impersonating')) style="padding-top: 36px;" @endif>
             {{-- Sidebar Header --}}
-            <div class="px-5 py-5">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h1 class="text-white text-sm font-semibold leading-tight">Platform Admin</h1>
-                        <p class="text-[11px] text-white/30 leading-tight">Super Admin Panel</p>
-                    </div>
+            <div class="border-b border-white/[0.06]">
+                <a href="{{ route('hub') }}" class="block px-4 pt-4 pb-1">
+                    <img src="{{ asset('images/bai-logo-nav.svg') }}" alt="BAI" class="w-full h-auto">
+                </a>
+                <div class="px-4 pb-3">
+                    <span class="text-[10px] font-semibold text-red-400/80 tracking-wider uppercase">Super Admin Panel</span>
                 </div>
             </div>
 

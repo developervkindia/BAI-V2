@@ -47,22 +47,23 @@ $statusLabels = [
 </head>
 <body class="h-full antialiased font-sans bg-[#0F0F18]"
       x-data="{ mobileSidebarOpen: false, userDropdownOpen: false }">
+<x-impersonation-banner />
 
 {{-- ============================================================ --}}
 {{-- SIDEBAR                                                      --}}
 {{-- ============================================================ --}}
 <aside class="fixed inset-y-0 left-0 w-[220px] bg-[#0B0B12] border-r border-white/[0.06] flex flex-col z-30 hidden lg:flex">
 
-    {{-- TOP: Org + back --}}
-    <div class="flex items-center gap-2.5 px-3 h-14 border-b border-white/[0.06] shrink-0">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-[13px] font-bold shrink-0 prod-bg-muted prod-text">
-            {{ strtoupper(substr($org?->name ?? 'S', 0, 1)) }}
-        </div>
-        <div class="flex-1 min-w-0">
-            <p class="text-[12px] font-semibold text-white/70 truncate leading-tight">{{ $org?->name ?? 'BAI' }}</p>
+    {{-- TOP: Logo + back --}}
+    <div class="shrink-0 border-b border-white/[0.06]">
+        <a href="{{ route('hub') }}" class="block px-3 pt-3 pb-1">
+            <img src="{{ asset('images/bai-logo-nav.svg') }}" alt="BAI" class="w-full h-auto">
+        </a>
+        <div class="px-3 pb-2.5 flex items-center justify-between">
+            <span class="text-[10px] font-semibold text-orange-400/80 tracking-wider uppercase">Projects</span>
             <a href="{{ route('projects.index') }}" class="text-[10px] text-white/30 hover:text-white/55 transition-colors flex items-center gap-0.5">
                 <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-                BAI Projects
+                All Projects
             </a>
         </div>
     </div>

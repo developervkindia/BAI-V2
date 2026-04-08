@@ -12,10 +12,12 @@ class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        $boardProduct       = Product::where('key', 'board')->first();
-        $projectsProduct    = Product::where('key', 'projects')->first();
+        $boardProduct = Product::where('key', 'board')->first();
+        $projectsProduct = Product::where('key', 'projects')->first();
         $opportunityProduct = Product::where('key', 'opportunity')->first();
-        $hrProduct          = Product::where('key', 'hr')->first();
+        $hrProduct = Product::where('key', 'hr')->first();
+        $knowledgeProduct = Product::where('key', 'knowledge_base')->first();
+        $docsProduct = Product::where('key', 'docs')->first();
 
         $permissions = [
             // ── Global (no product) ───────────────────────────────────
@@ -30,6 +32,8 @@ class PermissionSeeder extends Seeder
             ['key' => 'admin.roles.manage',    'name' => 'Manage Roles & Permissions',  'group' => 'admin',        'product_id' => null],
             ['key' => 'admin.users.manage',    'name' => 'Manage Users',                'group' => 'admin',        'product_id' => null],
             ['key' => 'admin.users.view',      'name' => 'View User Profiles',          'group' => 'admin',        'product_id' => null],
+            ['key' => 'org.clients.view',      'name' => 'View Clients & Client Portal', 'group' => 'clients_crm',  'product_id' => null],
+            ['key' => 'org.clients.manage',    'name' => 'Manage Clients & Portal',     'group' => 'clients_crm',  'product_id' => null],
 
             // ── BAI Board ─────────────────────────────────────────────
             ['key' => 'board.boards.view',     'name' => 'View Boards',        'group' => 'boards',   'product_id' => $boardProduct?->id],
@@ -37,12 +41,12 @@ class PermissionSeeder extends Seeder
             ['key' => 'board.boards.edit',     'name' => 'Edit Boards',        'group' => 'boards',   'product_id' => $boardProduct?->id],
             ['key' => 'board.boards.delete',   'name' => 'Delete Boards',      'group' => 'boards',   'product_id' => $boardProduct?->id],
             ['key' => 'board.boards.archive',  'name' => 'Archive Boards',     'group' => 'boards',   'product_id' => $boardProduct?->id],
-            ['key' => 'board.members.manage',  'name' => 'Manage Board Members','group' => 'boards',  'product_id' => $boardProduct?->id],
+            ['key' => 'board.members.manage',  'name' => 'Manage Board Members', 'group' => 'boards',  'product_id' => $boardProduct?->id],
             ['key' => 'board.cards.create',    'name' => 'Create Cards',       'group' => 'cards',    'product_id' => $boardProduct?->id],
             ['key' => 'board.cards.edit',      'name' => 'Edit Cards',         'group' => 'cards',    'product_id' => $boardProduct?->id],
             ['key' => 'board.cards.delete',    'name' => 'Delete Cards',       'group' => 'cards',    'product_id' => $boardProduct?->id],
             ['key' => 'board.cards.move',      'name' => 'Move Cards',         'group' => 'cards',    'product_id' => $boardProduct?->id],
-            ['key' => 'board.labels.manage',   'name' => 'Manage Board Labels','group' => 'boards',   'product_id' => $boardProduct?->id],
+            ['key' => 'board.labels.manage',   'name' => 'Manage Board Labels', 'group' => 'boards',   'product_id' => $boardProduct?->id],
             ['key' => 'board.chat.access',     'name' => 'Access Board Chat',  'group' => 'boards',   'product_id' => $boardProduct?->id],
 
             // ── BAI Projects ──────────────────────────────────────────
@@ -83,11 +87,11 @@ class PermissionSeeder extends Seeder
             ['key' => 'opp.tasks.delete',        'name' => 'Delete Opportunity Tasks',     'group' => 'opp_tasks',    'product_id' => $opportunityProduct?->id],
             ['key' => 'opp.tasks.assign',        'name' => 'Assign Opportunity Tasks',     'group' => 'opp_tasks',    'product_id' => $opportunityProduct?->id],
             ['key' => 'opp.goals.manage',        'name' => 'Manage Goals',                 'group' => 'opp_goals',    'product_id' => $opportunityProduct?->id],
-            ['key' => 'opp.portfolios.manage',   'name' => 'Manage Portfolios',            'group' => 'opp_portfolios','product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.portfolios.manage',   'name' => 'Manage Portfolios',            'group' => 'opp_portfolios', 'product_id' => $opportunityProduct?->id],
             ['key' => 'opp.reports.view',        'name' => 'View Opportunity Reports',     'group' => 'opp_reports',  'product_id' => $opportunityProduct?->id],
             ['key' => 'opp.forms.manage',        'name' => 'Manage Opportunity Forms',     'group' => 'opp_forms',    'product_id' => $opportunityProduct?->id],
             ['key' => 'opp.rules.manage',        'name' => 'Manage Automation Rules',      'group' => 'opp_rules',    'product_id' => $opportunityProduct?->id],
-            ['key' => 'opp.templates.manage',    'name' => 'Manage Opportunity Templates', 'group' => 'opp_templates','product_id' => $opportunityProduct?->id],
+            ['key' => 'opp.templates.manage',    'name' => 'Manage Opportunity Templates', 'group' => 'opp_templates', 'product_id' => $opportunityProduct?->id],
 
             // ── BAI HR ────────────────────────────────────────────────
             ['key' => 'hr.people.view',              'name' => 'View People Directory',      'group' => 'hr_people',      'product_id' => $hrProduct?->id],
@@ -105,18 +109,28 @@ class PermissionSeeder extends Seeder
             ['key' => 'hr.payroll.manage',           'name' => 'Manage Payroll',             'group' => 'hr_payroll',     'product_id' => $hrProduct?->id],
             ['key' => 'hr.payroll.process',          'name' => 'Process Payroll Runs',       'group' => 'hr_payroll',     'product_id' => $hrProduct?->id],
             ['key' => 'hr.salary.manage',            'name' => 'Manage Salary Structures',   'group' => 'hr_payroll',     'product_id' => $hrProduct?->id],
-            ['key' => 'hr.performance.view_own',     'name' => 'View Own Reviews',           'group' => 'hr_performance','product_id' => $hrProduct?->id],
-            ['key' => 'hr.performance.view_all',     'name' => 'View All Reviews',           'group' => 'hr_performance','product_id' => $hrProduct?->id],
-            ['key' => 'hr.performance.manage',       'name' => 'Manage Review Cycles',       'group' => 'hr_performance','product_id' => $hrProduct?->id],
+            ['key' => 'hr.performance.view_own',     'name' => 'View Own Reviews',           'group' => 'hr_performance', 'product_id' => $hrProduct?->id],
+            ['key' => 'hr.performance.view_all',     'name' => 'View All Reviews',           'group' => 'hr_performance', 'product_id' => $hrProduct?->id],
+            ['key' => 'hr.performance.manage',       'name' => 'Manage Review Cycles',       'group' => 'hr_performance', 'product_id' => $hrProduct?->id],
             ['key' => 'hr.expenses.submit',          'name' => 'Submit Expense Claims',      'group' => 'hr_expenses',   'product_id' => $hrProduct?->id],
             ['key' => 'hr.expenses.approve',         'name' => 'Approve Expense Claims',     'group' => 'hr_expenses',   'product_id' => $hrProduct?->id],
             ['key' => 'hr.expenses.view_all',        'name' => 'View All Expenses',          'group' => 'hr_expenses',   'product_id' => $hrProduct?->id],
-            ['key' => 'hr.recruitment.view',         'name' => 'View Job Postings',          'group' => 'hr_recruitment','product_id' => $hrProduct?->id],
-            ['key' => 'hr.recruitment.manage',       'name' => 'Manage Recruitment',         'group' => 'hr_recruitment','product_id' => $hrProduct?->id],
+            ['key' => 'hr.recruitment.view',         'name' => 'View Job Postings',          'group' => 'hr_recruitment', 'product_id' => $hrProduct?->id],
+            ['key' => 'hr.recruitment.manage',       'name' => 'Manage Recruitment',         'group' => 'hr_recruitment', 'product_id' => $hrProduct?->id],
             ['key' => 'hr.surveys.manage',           'name' => 'Manage Surveys',             'group' => 'hr_surveys',    'product_id' => $hrProduct?->id],
             ['key' => 'hr.surveys.respond',          'name' => 'Respond to Surveys',         'group' => 'hr_surveys',    'product_id' => $hrProduct?->id],
-            ['key' => 'hr.announcements.manage',     'name' => 'Manage Announcements',       'group' => 'hr_announcements','product_id' => $hrProduct?->id],
-            ['key' => 'hr.announcements.view',       'name' => 'View Announcements',         'group' => 'hr_announcements','product_id' => $hrProduct?->id],
+            ['key' => 'hr.announcements.manage',     'name' => 'Manage Announcements',       'group' => 'hr_announcements', 'product_id' => $hrProduct?->id],
+            ['key' => 'hr.announcements.view',       'name' => 'View Announcements',         'group' => 'hr_announcements', 'product_id' => $hrProduct?->id],
+
+            // ── Knowledge Base ─────────────────────────────────────────
+            ['key' => 'knowledge.view',       'name' => 'View Knowledge Base',       'group' => 'knowledge', 'product_id' => $knowledgeProduct?->id],
+            ['key' => 'knowledge.contribute', 'name' => 'Create & Edit Own Articles', 'group' => 'knowledge', 'product_id' => $knowledgeProduct?->id],
+            ['key' => 'knowledge.moderate',   'name' => 'Moderate Knowledge Base',   'group' => 'knowledge', 'product_id' => $knowledgeProduct?->id],
+
+            // ── BAI Docs ──────────────────────────────────────────────
+            ['key' => 'docs.view',     'name' => 'View Documents',              'group' => 'docs', 'product_id' => $docsProduct?->id],
+            ['key' => 'docs.create',   'name' => 'Create & Edit Own Documents', 'group' => 'docs', 'product_id' => $docsProduct?->id],
+            ['key' => 'docs.moderate', 'name' => 'Moderate All Documents',      'group' => 'docs', 'product_id' => $docsProduct?->id],
         ];
 
         foreach ($permissions as $perm) {
@@ -144,7 +158,7 @@ class PermissionSeeder extends Seeder
             // Board basics
             'board.boards.view', 'board.cards.create', 'board.cards.edit', 'board.cards.move', 'board.chat.access',
             // Project basics
-            'projects.view', 'tasks.view', 'tasks.create', 'tasks.edit', 'tasks.assign',
+            'projects.view', 'org.clients.view', 'tasks.view', 'tasks.create', 'tasks.edit', 'tasks.assign',
             'time.log', 'time.view_own', 'time.timesheets.submit',
             'financial.budget.view', 'financial.reports.view',
             'content.documents.view', 'content.chat.access', 'content.comments.create',
@@ -155,6 +169,10 @@ class PermissionSeeder extends Seeder
             'hr.people.view', 'hr.attendance.view_own', 'hr.leave.apply', 'hr.leave.view_own',
             'hr.payroll.view_own', 'hr.performance.view_own', 'hr.expenses.submit',
             'hr.surveys.respond', 'hr.announcements.view',
+            // Knowledge Base
+            'knowledge.view', 'knowledge.contribute',
+            // BAI Docs
+            'docs.view', 'docs.create',
         ];
     }
 

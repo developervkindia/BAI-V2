@@ -7,46 +7,40 @@
     <title>BAI — Business Automation & Insights</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full antialiased font-sans bg-[#0A0A10]" x-data="{ orgDropdown: false, userDropdown: false }">
+<body class="h-full antialiased font-sans bg-[#0A0A10]">
 
-    {{-- ============================================================ --}}
-    {{-- TOP BAR                                                       --}}
-    {{-- ============================================================ --}}
     <header class="fixed top-0 left-0 right-0 h-14 bg-[#0A0A10]/95 backdrop-blur-md border-b border-white/[0.06] z-40 flex items-center px-6">
 
         {{-- BAI Brand --}}
-        <div class="flex items-center gap-2.5">
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="bai-hub-bg" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#312E81"/>
-                        <stop offset="55%" stop-color="#4338CA"/>
-                        <stop offset="100%" stop-color="#7C3AED"/>
-                    </linearGradient>
-                    <linearGradient id="bai-hub-shine" x1="0" y1="0" x2="0" y2="28" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="white" stop-opacity="0.18"/>
-                        <stop offset="60%" stop-color="white" stop-opacity="0"/>
-                    </linearGradient>
-                </defs>
-                <rect width="28" height="28" rx="7" fill="url(#bai-hub-bg)"/>
-                <rect width="28" height="28" rx="7" fill="url(#bai-hub-shine)"/>
-                <circle cx="14" cy="7.5" r="2" fill="white"/>
-                <circle cx="7.5" cy="20" r="2" fill="white"/>
-                <circle cx="20.5" cy="20" r="2" fill="white"/>
-                <line x1="14" y1="9.5" x2="8.8" y2="18.5" stroke="white" stroke-opacity="0.65" stroke-width="1.5" stroke-linecap="round"/>
-                <line x1="14" y1="9.5" x2="19.2" y2="18.5" stroke="white" stroke-opacity="0.65" stroke-width="1.5" stroke-linecap="round"/>
-                <line x1="9.5" y1="20" x2="18.5" y2="20" stroke="white" stroke-opacity="0.65" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            <div>
-                <span class="text-[15px] font-bold text-white/90 tracking-tight leading-none">BAI</span>
-                <span class="block text-[9px] font-medium text-white/35 tracking-wider uppercase leading-none mt-0.5">Business Automation</span>
-            </div>
-        </div>
+        <a href="{{ route('hub') }}" class="flex items-center">
+            <img src="{{ asset('images/bai-logo-nav.svg') }}" alt="BAI" class="h-10 w-auto">
+        </a>
 
         <div class="flex-1"></div>
 
-        {{-- Right: Org switcher + User --}}
+        {{-- Right actions --}}
         <div class="flex items-center gap-2">
+
+            {{-- Impersonation indicator --}}
+            @if(session('super_admin_impersonating'))
+                <form method="POST" action="{{ route('super-admin.stop-impersonating') }}" class="flex items-center">
+                    @csrf
+                    <button type="submit"
+                            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-red-500/15 border border-red-500/25 text-red-400 hover:bg-red-500/25 hover:text-red-300 transition-colors">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                        Stop Impersonating
+                    </button>
+                </form>
+            @endif
+
+            {{-- Platform Admin --}}
+            @if(auth()->user()->is_super_admin && !session('super_admin_impersonating'))
+                <a href="{{ route('super-admin.dashboard') }}"
+                   class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-red-500/10 border border-red-500/20 text-red-400/80 hover:bg-red-500/20 hover:text-red-300 transition-colors">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    Admin
+                </a>
+            @endif
 
             {{-- Org switcher --}}
             @php $org = auth()->user()?->currentOrganization(); @endphp
@@ -79,7 +73,18 @@
                             </button>
                         </form>
                     @endforeach
-                    <div class="border-t border-white/[0.06] px-3.5 py-2">
+                    <div class="border-t border-white/[0.06] px-3.5 py-2 space-y-1">
+                        @if($org && $org->isAdmin(auth()->user()))
+                            <a href="{{ route('organizations.manage', $org) }}" class="flex items-center gap-2 py-1.5 text-[12px] text-white/55 hover:text-white/85 transition-colors">
+                                <svg class="w-3.5 h-3.5 shrink-0 text-violet-400/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                                Organization management
+                            </a>
+                        @elseif($org)
+                            <a href="{{ route('organizations.show', $org) }}" class="flex items-center gap-2 py-1.5 text-[12px] text-white/45 hover:text-white/75 transition-colors">
+                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                View organization
+                            </a>
+                        @endif
                         <a href="{{ route('organizations.create') }}" class="flex items-center gap-2 text-[11px] text-white/30 hover:text-white/60 transition-colors">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                             New Organization
@@ -87,6 +92,22 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Organization (hub-level management for owners/admins) --}}
+            @if($org && $org->isAdmin(auth()->user()))
+                <a href="{{ route('organizations.manage', $org) }}"
+                   class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.07] text-[12px] font-medium text-white/50 hover:text-white/85 transition-all"
+                   title="Organization management">
+                    <svg class="w-3.5 h-3.5 text-violet-400/90 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    <span class="truncate max-w-[9rem]">Organization</span>
+                </a>
+            @elseif($org)
+                <a href="{{ route('organizations.show', $org) }}"
+                   class="w-8 h-8 rounded-lg flex items-center justify-center text-white/30 hover:text-white/60 hover:bg-white/[0.06] transition-colors"
+                   title="View organization">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                </a>
+            @endif
 
             {{-- User menu --}}
             <div x-data="{ open: false }" @click.away="open = false" class="relative">
@@ -107,12 +128,6 @@
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         Profile
                     </a>
-                    @if($org)
-                        <a href="{{ route('organizations.show', $org) }}" class="flex items-center gap-2.5 px-3.5 py-2.5 text-[12px] text-white/55 hover:bg-white/[0.05] hover:text-white/80 transition-colors">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                            Org Settings
-                        </a>
-                    @endif
                     <div class="border-t border-white/[0.06]">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -127,9 +142,6 @@
         </div>
     </header>
 
-    {{-- ============================================================ --}}
-    {{-- PAGE CONTENT                                                  --}}
-    {{-- ============================================================ --}}
     <main class="pt-14 min-h-full">
         <div class="max-w-5xl mx-auto px-6 py-10">
             {{ $slot }}

@@ -12,6 +12,10 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
+        if ($user->is_super_admin) {
+            return redirect()->route('super-admin.dashboard');
+        }
+
         $workspaces = $user->allWorkspaces();
 
         $starredBoards = $user->starredBoards()

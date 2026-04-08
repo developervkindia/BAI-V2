@@ -19,7 +19,7 @@ class ProjectController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $org  = $user->currentOrganization();
+        $org = $user->currentOrganization();
 
         $projects = Project::where('organization_id', $org->id)
             ->where(function ($q) use ($user) {
@@ -82,43 +82,43 @@ class ProjectController extends Controller
             ->get();
 
         return view('projects.index', [
-            'projects'      => $projects,
-            'organization'  => $org,
-            'workspaces'    => collect(),
-            'totalRevenue'  => $totalRevenue,
-            'totalHours'    => round($totalHours, 1),
-            'memberCount'   => $memberCount,
-            'workload'      => $workload,
-            'todaysTasks'   => $todaysTasks,
+            'projects' => $projects,
+            'organization' => $org,
+            'workspaces' => collect(),
+            'totalRevenue' => $totalRevenue,
+            'totalHours' => round($totalHours, 1),
+            'memberCount' => $memberCount,
+            'workload' => $workload,
+            'todaysTasks' => $todaysTasks,
         ]);
     }
 
     public function store(Request $request)
     {
         $user = $request->user();
-        $org  = $user->currentOrganization();
+        $org = $user->currentOrganization();
 
         $validated = $request->validate([
-            'name'         => 'required|string|max:255',
-            'description'  => 'nullable|string|max:2000',
-            'status'       => 'in:not_started,in_progress,on_hold,completed,cancelled',
-            'priority'     => 'in:none,low,medium,high,critical',
-            'color'        => 'nullable|string|max:20',
-            'start_date'   => 'nullable|date',
-            'end_date'     => 'nullable|date|after_or_equal:start_date',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'status' => 'in:not_started,in_progress,on_hold,completed,cancelled',
+            'priority' => 'in:none,low,medium,high,critical',
+            'color' => 'nullable|string|max:20',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
             'project_type' => 'in:fixed,billing',
-            'client_id'    => 'nullable|integer|exists:clients,id',
-            'budget'       => 'nullable|numeric|min:0',
-            'hourly_rate'  => 'nullable|numeric|min:0',
-            'srs_url'      => 'nullable|url|max:500',
-            'design_url'   => 'nullable|url|max:500',
+            'client_id' => 'nullable|integer|exists:clients,id',
+            'budget' => 'nullable|numeric|min:0',
+            'hourly_rate' => 'nullable|numeric|min:0',
+            'srs_url' => 'nullable|url|max:500',
+            'design_url' => 'nullable|url|max:500',
         ]);
 
         $project = Project::create(array_merge($validated, [
             'organization_id' => $org->id,
-            'owner_id'        => $user->id,
-            'slug'            => Str::slug($validated['name']) . '-' . Str::random(6),
-            'color'           => $validated['color'] ?? '#6366f1',
+            'owner_id' => $user->id,
+            'slug' => Str::slug($validated['name']).'-'.Str::random(6),
+            'color' => $validated['color'] ?? '#6366f1',
         ]));
 
         $project->members()->attach($user->id, ['role' => 'manager']);
@@ -145,8 +145,8 @@ class ProjectController extends Controller
         $canEdit = $project->canEdit($request->user());
 
         return view('projects.show', [
-            'project'    => $project,
-            'canEdit'    => $canEdit,
+            'project' => $project,
+            'canEdit' => $canEdit,
             'workspaces' => collect(),
         ]);
     }
@@ -156,19 +156,19 @@ class ProjectController extends Controller
         abort_unless($project->canEdit($request->user()), 403);
 
         $validated = $request->validate([
-            'name'          => 'sometimes|required|string|max:255',
-            'description'   => 'nullable|string|max:2000',
-            'status'        => 'sometimes|in:not_started,in_progress,on_hold,completed,cancelled',
-            'priority'      => 'sometimes|in:none,low,medium,high,critical',
-            'color'         => 'nullable|string|max:20',
-            'start_date'    => 'nullable|date',
-            'end_date'      => 'nullable|date',
+            'name' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'status' => 'sometimes|in:not_started,in_progress,on_hold,completed,cancelled',
+            'priority' => 'sometimes|in:none,low,medium,high,critical',
+            'color' => 'nullable|string|max:20',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
             'design_status' => 'sometimes|in:none,pending,approved,rejected',
             'design_feedback' => 'nullable|string|max:2000',
-            'srs_url'       => 'nullable|url|max:500',
-            'design_url'    => 'nullable|url|max:500',
-            'hourly_rate'   => 'nullable|numeric|min:0',
-            'budget'        => 'nullable|numeric|min:0',
+            'srs_url' => 'nullable|url|max:500',
+            'design_url' => 'nullable|url|max:500',
+            'hourly_rate' => 'nullable|numeric|min:0',
+            'budget' => 'nullable|numeric|min:0',
         ]);
 
         if (isset($validated['design_status']) && in_array($validated['design_status'], ['approved', 'rejected'])) {
@@ -212,29 +212,29 @@ class ProjectController extends Controller
         $canEdit = $project->canEdit($request->user());
 
         $tasks = $project->tasks->map(fn ($t) => [
-            'id'                => $t->id,
-            'title'             => $t->title,
-            'status'            => $t->status,
+            'id' => $t->id,
+            'title' => $t->title,
+            'status' => $t->status,
             'project_status_id' => $t->project_status_id,
-            'status_name'       => $t->status_name,
-            'status_color'      => $t->status_color,
-            'priority'          => $t->priority,
-            'issue_type'        => $t->issue_type ?? 'task',
-            'story_points'      => $t->story_points,
-            'is_completed'      => (bool) $t->is_completed,
-            'due_date'          => $t->due_date?->format('Y-m-d'),
-            'parent_task_id'    => $t->parent_task_id,
-            'subtasks_count'    => 0,
-            'task_list'         => $t->taskList ? ['id' => $t->taskList->id, 'name' => $t->taskList->name] : null,
-            'assignee'          => $t->assignee ? ['id' => $t->assignee->id, 'name' => $t->assignee->name] : null,
-            'assignee_id'       => $t->assignee_id,
-            'labels'            => $t->labels->map(fn($l) => ['id' => $l->id, 'name' => $l->name, 'color' => $l->color])->values(),
+            'status_name' => $t->status_name,
+            'status_color' => $t->status_color,
+            'priority' => $t->priority,
+            'issue_type' => $t->issue_type ?? 'task',
+            'story_points' => $t->story_points,
+            'is_completed' => (bool) $t->is_completed,
+            'due_date' => $t->due_date?->format('Y-m-d'),
+            'parent_task_id' => $t->parent_task_id,
+            'subtasks_count' => 0,
+            'task_list' => $t->taskList ? ['id' => $t->taskList->id, 'name' => $t->taskList->name] : null,
+            'assignee' => $t->assignee ? ['id' => $t->assignee->id, 'name' => $t->assignee->name] : null,
+            'assignee_id' => $t->assignee_id,
+            'labels' => $t->labels->map(fn ($l) => ['id' => $l->id, 'name' => $l->name, 'color' => $l->color])->values(),
         ]);
 
         return view('projects.board', [
-            'project'    => $project,
-            'canEdit'    => $canEdit,
-            'tasks'      => $tasks,
+            'project' => $project,
+            'canEdit' => $canEdit,
+            'tasks' => $tasks,
             'workspaces' => collect(),
         ]);
     }
@@ -248,8 +248,8 @@ class ProjectController extends Controller
         $canEdit = $project->canEdit($request->user());
 
         return view('projects.milestones', [
-            'project'    => $project,
-            'canEdit'    => $canEdit,
+            'project' => $project,
+            'canEdit' => $canEdit,
             'workspaces' => collect(),
         ]);
     }
@@ -258,7 +258,7 @@ class ProjectController extends Controller
     {
         abort_unless($project->canAccess($request->user()), 403);
 
-        $project->load(['members', 'labels', 'milestones.tasks', 'taskLists', 'statuses', 'owner', 'client']);
+        $project->load(['members', 'labels', 'milestones.tasks', 'taskLists', 'statuses', 'owner', 'client', 'organization']);
 
         $canEdit = $project->canEdit($request->user());
 
@@ -342,17 +342,17 @@ class ProjectController extends Controller
             ->with(['assignee', 'taskList', 'projectStatus'])
             ->get()
             ->map(fn ($t) => [
-                'id'                => $t->id,
-                'title'             => $t->title,
-                'status'            => $t->status,
+                'id' => $t->id,
+                'title' => $t->title,
+                'status' => $t->status,
                 'project_status_id' => $t->project_status_id,
-                'status_name'       => $t->status_name,
-                'status_color'      => $t->status_color,
-                'priority'          => $t->priority,
-                'issue_type'        => $t->issue_type ?? 'task',
-                'due_date'          => $t->due_date->format('Y-m-d'),
-                'is_completed'      => $t->is_completed,
-                'assignee'          => $t->assignee ? ['name' => $t->assignee->name] : null,
+                'status_name' => $t->status_name,
+                'status_color' => $t->status_color,
+                'priority' => $t->priority,
+                'issue_type' => $t->issue_type ?? 'task',
+                'due_date' => $t->due_date->format('Y-m-d'),
+                'is_completed' => $t->is_completed,
+                'assignee' => $t->assignee ? ['name' => $t->assignee->name] : null,
             ]);
 
         $canEdit = $project->canEdit($request->user());
@@ -414,7 +414,7 @@ class ProjectController extends Controller
         $week->load(['entries.user', 'locker']);
         $project->load(['client', 'owner']);
 
-        $taskIds  = $project->tasks()->pluck('id');
+        $taskIds = $project->tasks()->pluck('id');
         $timeLogs = ProjectTimeLog::whereIn('project_task_id', $taskIds)
             ->whereBetween('logged_at', [$week->week_start, $week->week_end])
             ->with(['task:id,title', 'user:id,name'])
@@ -447,43 +447,43 @@ class ProjectController extends Controller
             ->orderByRaw("FIELD(priority,'critical','high','medium','low','none')")
             ->get()
             ->map(fn ($t) => [
-                'id'                => $t->id,
-                'title'             => $t->title,
-                'status'            => $t->status,
+                'id' => $t->id,
+                'title' => $t->title,
+                'status' => $t->status,
                 'project_status_id' => $t->project_status_id,
-                'status_name'       => $t->status_name,
-                'status_color'      => $t->status_color,
-                'priority'          => $t->priority,
-                'issue_type'        => $t->issue_type ?? 'task',
-                'story_points'      => $t->story_points,
-                'due_date'          => $t->due_date?->format('Y-m-d'),
-                'assignee_id'       => $t->assignee_id,
-                'assignee'          => $t->assignee ? ['id' => $t->assignee->id, 'name' => $t->assignee->name] : null,
-                'task_list'         => $t->taskList ? ['id' => $t->taskList->id, 'name' => $t->taskList->name] : null,
-                'labels'            => $t->labels->map(fn($l) => ['id' => $l->id, 'name' => $l->name, 'color' => $l->color])->values(),
-                'position'          => $t->position,
-                'is_completed'      => $t->is_completed,
-                'task_list_id'      => $t->task_list_id,
+                'status_name' => $t->status_name,
+                'status_color' => $t->status_color,
+                'priority' => $t->priority,
+                'issue_type' => $t->issue_type ?? 'task',
+                'story_points' => $t->story_points,
+                'due_date' => $t->due_date?->format('Y-m-d'),
+                'assignee_id' => $t->assignee_id,
+                'assignee' => $t->assignee ? ['id' => $t->assignee->id, 'name' => $t->assignee->name] : null,
+                'task_list' => $t->taskList ? ['id' => $t->taskList->id, 'name' => $t->taskList->name] : null,
+                'labels' => $t->labels->map(fn ($l) => ['id' => $l->id, 'name' => $l->name, 'color' => $l->color])->values(),
+                'position' => $t->position,
+                'is_completed' => $t->is_completed,
+                'task_list_id' => $t->task_list_id,
             ]);
 
         $sprints = $project->sprints->map(fn ($s) => [
-            'id'          => $s->id,
-            'name'        => $s->name,
-            'start_date'  => $s->start_date?->format('Y-m-d'),
-            'end_date'    => $s->end_date?->format('Y-m-d'),
-            'status'      => $s->status,
-            'tasks'       => $s->tasks->whereNull('deleted_at')->map(fn ($t) => [
-                'id'                => $t->id,
-                'title'             => $t->title,
-                'status'            => $t->status,
+            'id' => $s->id,
+            'name' => $s->name,
+            'start_date' => $s->start_date?->format('Y-m-d'),
+            'end_date' => $s->end_date?->format('Y-m-d'),
+            'status' => $s->status,
+            'tasks' => $s->tasks->whereNull('deleted_at')->map(fn ($t) => [
+                'id' => $t->id,
+                'title' => $t->title,
+                'status' => $t->status,
                 'project_status_id' => $t->project_status_id,
-                'status_name'       => $t->status_name,
-                'status_color'      => $t->status_color,
-                'priority'          => $t->priority,
-                'issue_type'        => $t->issue_type ?? 'task',
-                'story_points'      => $t->story_points,
-                'is_completed'      => $t->is_completed,
-                'assignee_id'       => $t->assignee_id,
+                'status_name' => $t->status_name,
+                'status_color' => $t->status_color,
+                'priority' => $t->priority,
+                'issue_type' => $t->issue_type ?? 'task',
+                'story_points' => $t->story_points,
+                'is_completed' => $t->is_completed,
+                'assignee_id' => $t->assignee_id,
             ])->values(),
         ]);
 
@@ -500,8 +500,8 @@ class ProjectController extends Controller
         $canEdit = $project->canEdit($request->user());
 
         $weekStart = $request->input('week_start', now()->startOfWeek()->toDateString());
-        $weekEnd   = Carbon::parse($weekStart)->endOfWeek()->toDateString();
-        $userId    = $project->isManager($request->user())
+        $weekEnd = Carbon::parse($weekStart)->endOfWeek()->toDateString();
+        $userId = $project->isManager($request->user())
             ? ($request->input('user_id', $request->user()->id))
             : $request->user()->id;
 
@@ -520,11 +520,12 @@ class ProjectController extends Controller
                 $day = $log->logged_at->format('Y-m-d');
                 $days[$day] = ($days[$day] ?? 0) + $log->hours;
             }
+
             return [
-                'task_id'   => $task->id,
-                'title'     => $task->title,
-                'days'      => $days,
-                'total'     => round(array_sum($days), 2),
+                'task_id' => $task->id,
+                'title' => $task->title,
+                'days' => $days,
+                'total' => round(array_sum($days), 2),
             ];
         })->values();
 
@@ -568,7 +569,7 @@ class ProjectController extends Controller
         // Weekly burn trend (last 8 weeks)
         $weeklySpend = ProjectTimeLog::whereIn('project_task_id', $taskIds)
             ->where('logged_at', '>=', now()->subWeeks(8)->startOfWeek())
-            ->selectRaw("YEARWEEK(logged_at, 1) as week_key, SUM(hours) as total_hours")
+            ->selectRaw('YEARWEEK(logged_at, 1) as week_key, SUM(hours) as total_hours')
             ->groupBy('week_key')
             ->orderBy('week_key')
             ->get();
@@ -618,20 +619,20 @@ class ProjectController extends Controller
             $capacity = UserCapacity::getForUser($member->id, $project->id);
 
             return [
-                'user'            => ['id' => $member->id, 'name' => $member->name],
-                'role'            => $member->pivot->role,
-                'tasks'           => $openTasks->map(fn($t) => [
-                    'id'       => $t->id,
-                    'title'    => $t->title,
+                'user' => ['id' => $member->id, 'name' => $member->name],
+                'role' => $member->pivot->role,
+                'tasks' => $openTasks->map(fn ($t) => [
+                    'id' => $t->id,
+                    'title' => $t->title,
                     'priority' => $t->priority,
                     'due_date' => $t->due_date?->format('M j'),
                     'estimated_hours' => $t->estimated_hours,
                 ]),
                 'total_estimated' => round($openTasks->sum('estimated_hours'), 1),
-                'total_logged'    => round(ProjectTimeLog::where('user_id', $member->id)
+                'total_logged' => round(ProjectTimeLog::where('user_id', $member->id)
                     ->whereIn('project_task_id', $openTasks->pluck('id'))
                     ->sum('hours'), 1),
-                'capacity'        => $capacity?->weekly_capacity_hours ?? 40,
+                'capacity' => $capacity?->weekly_capacity_hours ?? 40,
             ];
         });
 
@@ -653,7 +654,7 @@ class ProjectController extends Controller
         $canEdit = $project->canEdit($request->user());
 
         $weekStart = Carbon::parse($request->input('week_start', now()->startOfWeek()))->toDateString();
-        $weekEnd   = Carbon::parse($weekStart)->endOfWeek()->toDateString();
+        $weekEnd = Carbon::parse($weekStart)->endOfWeek()->toDateString();
 
         $taskIds = $project->tasks()->pluck('id');
         $memberData = $project->members->map(function ($member) use ($project, $taskIds, $weekStart, $weekEnd) {
@@ -685,12 +686,12 @@ class ProjectController extends Controller
             $utilPct = $capHours > 0 ? round(($logged / $capHours) * 100, 1) : 0;
 
             return [
-                'user'       => ['id' => $member->id, 'name' => $member->name],
-                'capacity'   => $capHours,
-                'allocated'  => round($allocated, 1),
-                'logged'     => round($logged, 1),
-                'util_pct'   => $utilPct,
-                'daily'      => $dailyHours,
+                'user' => ['id' => $member->id, 'name' => $member->name],
+                'capacity' => $capHours,
+                'allocated' => round($allocated, 1),
+                'logged' => round($logged, 1),
+                'util_pct' => $utilPct,
+                'daily' => $dailyHours,
             ];
         });
 
@@ -702,6 +703,7 @@ class ProjectController extends Controller
         abort_unless($project->canAccess($request->user()), 403);
         $project->load(['members', 'statuses']);
         $canEdit = $project->canEdit($request->user());
+
         return view('projects.chat', compact('project', 'canEdit'));
     }
 
@@ -710,6 +712,7 @@ class ProjectController extends Controller
         abort_unless($project->canAccess($request->user()), 403);
         $project->load(['members', 'statuses']);
         $canEdit = $project->canEdit($request->user());
+
         return view('projects.documents', compact('project', 'canEdit'));
     }
 
@@ -718,6 +721,7 @@ class ProjectController extends Controller
         abort_unless($project->isManager($request->user()), 403);
         $project->load(['statuses']);
         $canEdit = true;
+
         return view('projects.recycle-bin', compact('project', 'canEdit'));
     }
 
@@ -730,9 +734,9 @@ class ProjectController extends Controller
 
         $reportType = $request->input('report', 'task-progress');
         $from = Carbon::parse($request->input('date_from', now()->subDays(30)));
-        $to   = Carbon::parse($request->input('date_to', now()));
+        $to = Carbon::parse($request->input('date_to', now()));
 
-        $svc = new ProjectReportService();
+        $svc = new ProjectReportService;
         $reportData = [];
 
         switch ($reportType) {

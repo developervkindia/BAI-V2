@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" fill="none">
+  <defs>
+    <!-- Primary brand gradient -->
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#d946ef"/>
+    </linearGradient>
+    <!-- Subtle light gradient for inner shapes -->
+    <linearGradient id="lightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#c084fc"/>
+    </linearGradient>
+    <!-- Glow filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- === ICON MARK === -->
+  <!-- Outer hexagonal shape - represents the unified platform -->
+  <g transform="translate(10, 8)">
+    <!-- Main hexagon outline -->
+    <path d="M52 4L96 28V76L52 100L8 76V28L52 4Z" fill="url(#brandGrad)" opacity="0.12"/>
+    <path d="M52 4L96 28V76L52 100L8 76V28L52 4Z" stroke="url(#brandGrad)" stroke-width="2.5" fill="none"/>
+
+    <!-- Inner diamond / data node - represents insights -->
+    <path d="M52 22L78 42V62L52 82L26 62V42L52 22Z" fill="url(#brandGrad)" opacity="0.25"/>
+
+    <!-- Central abstract "pulse" lines - represents automation -->
+    <g stroke="url(#lightGrad)" stroke-width="2.2" stroke-linecap="round" fill="none" filter="url(#glow)">
+      <!-- Left signal arc -->
+      <path d="M34 52C38 42 46 36 52 36"/>
+      <!-- Right signal arc -->
+      <path d="M70 52C66 42 58 36 52 36"/>
+      <!-- Bottom left arc -->
+      <path d="M34 52C38 62 46 68 52 68"/>
+      <!-- Bottom right arc -->
+      <path d="M70 52C66 62 58 68 52 68"/>
+    </g>
+
+    <!-- Center dot - the core -->
+    <circle cx="52" cy="52" r="5" fill="url(#brandGrad)"/>
+    <circle cx="52" cy="52" r="2.5" fill="white" opacity="0.9"/>
+
+    <!-- Four corner nodes representing products -->
+    <circle cx="52" cy="22" r="3" fill="url(#brandGrad)"/>
+    <circle cx="78" cy="42" r="3" fill="url(#brandGrad)"/>
+    <circle cx="78" cy="62" r="3" fill="url(#brandGrad)"/>
+    <circle cx="52" cy="82" r="3" fill="url(#brandGrad)"/>
+    <circle cx="26" cy="62" r="3" fill="url(#brandGrad)"/>
+    <circle cx="26" cy="42" r="3" fill="url(#brandGrad)"/>
+
+    <!-- Connecting lines from center to nodes -->
+    <g stroke="url(#brandGrad)" stroke-width="1" opacity="0.35">
+      <line x1="52" y1="52" x2="52" y2="22"/>
+      <line x1="52" y1="52" x2="78" y2="42"/>
+      <line x1="52" y1="52" x2="78" y2="62"/>
+      <line x1="52" y1="52" x2="52" y2="82"/>
+      <line x1="52" y1="52" x2="26" y2="62"/>
+      <line x1="52" y1="52" x2="26" y2="42"/>
+    </g>
+  </g>
+
+  <!-- === WORDMARK === -->
+  <g transform="translate(130, 16)">
+    <!-- B -->
+    <path d="M0 0H28C38.5 0 46 4.5 46 13.5C46 19.5 42.5 23.5 37 25.5C43.5 27 48 32 48 39C48 49 40 54.5 28.5 54.5H0V0ZM14 22H26C31 22 34 19.5 34 15.5C34 11.5 31 9 26 9H14V22ZM14 45.5H27C32.5 45.5 36 42.5 36 38C36 33.5 32.5 30.5 27 30.5H14V45.5Z"
+          fill="url(#brandGrad)"/>
+
+    <!-- A -->
+    <path d="M86.5 0L117 54.5H103L98 40H75L70 54.5H56L86.5 0Z M79 32H94L86.5 11L79 32Z"
+          fill="url(#brandGrad)" fill-rule="evenodd"/>
+
+    <!-- I -->
+    <path d="M125 0H139V54.5H125V0Z" fill="url(#brandGrad)"/>
+    <!-- I top accent dot -->
+    <rect x="125" y="0" width="14" height="3" rx="1.5" fill="url(#lightGrad)"/>
+  </g>
+
+  <!-- === TAGLINE === -->
+  <text x="130" y="92" font-family="'Plus Jakarta Sans', 'Inter', 'Segoe UI', sans-serif"
+        font-size="11.5" font-weight="500" letter-spacing="3.5" fill="#94a3b8">
+    BUSINESS AUTOMATION &amp; INSIGHTS
+  </text>
+
+  <!-- Decorative accent line under tagline -->
+  <line x1="130" y1="100" x2="220" y2="100" stroke="url(#brandGrad)" stroke-width="1.5" opacity="0.4" stroke-linecap="round"/>
+</svg>

@@ -15,16 +15,19 @@
     </style>
 </head>
 <body class="h-full antialiased font-sans bg-[#0F0F18]" x-data="{ mobileSidebarOpen: false }">
+<x-impersonation-banner />
 
 {{-- SIDEBAR --}}
 <aside class="fixed inset-y-0 left-0 w-[220px] bg-[#0B0B12] flex flex-col z-30 border-r border-white/[0.06] hidden lg:flex">
 
     {{-- Logo --}}
-    <div class="px-4 pt-4 pb-3 flex items-center gap-2.5 border-b border-white/[0.06]">
-        <div class="w-7 h-7 rounded-lg bg-cyan-500/20 flex items-center justify-center">
-            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    <div class="shrink-0 border-b border-white/[0.06]">
+        <a href="{{ route('hub') }}" class="block px-3 pt-3 pb-1">
+            <img src="{{ asset('images/bai-logo-nav.svg') }}" alt="BAI" class="w-full h-auto">
+        </a>
+        <div class="px-3 pb-2.5">
+            <span class="text-[10px] font-semibold text-cyan-400/80 tracking-wider uppercase">HR &middot; People & Payroll</span>
         </div>
-        <span class="text-[14px] font-bold text-white/90 tracking-tight">BAI HR</span>
     </div>
 
     {{-- Navigation --}}

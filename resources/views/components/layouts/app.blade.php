@@ -17,6 +17,7 @@ $productConfig = config('products', []);
 </head>
 <body class="h-full antialiased font-sans bg-[#0F0F18]"
       x-data="{ sidebarOpen: true, mobileSidebarOpen: false, orgDropdownOpen: false, userDropdownOpen: false }">
+<x-impersonation-banner />
 
 {{-- ============================================================ --}}
 {{-- SIDEBAR (Desktop)                                            --}}
@@ -24,23 +25,24 @@ $productConfig = config('products', []);
 <aside class="fixed inset-y-0 left-0 w-[220px] bg-[#0B0B12] border-r border-white/[0.06] flex flex-col z-30 transition-transform duration-200 hidden lg:flex"
        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
 
-    {{-- TOP: Org Identity --}}
-    <div class="relative h-14 flex items-center gap-2.5 px-3 border-b border-white/[0.06] shrink-0">
-        {{-- Org Avatar --}}
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-[13px] font-bold shrink-0 prod-bg-muted prod-text">
-            {{ $orgInitial }}
+    {{-- TOP: Logo + Org Identity --}}
+    <div class="relative shrink-0 border-b border-white/[0.06]">
+        <a href="{{ route('hub') }}" class="block px-3 pt-3 pb-1">
+            <img src="{{ asset('images/bai-logo-nav.svg') }}" alt="BAI" class="w-full h-auto">
+        </a>
+        <div class="flex items-center gap-2 px-3 pb-2.5">
+            {{-- Org Name --}}
+            <div class="flex-1 min-w-0 cursor-pointer" @click="orgDropdownOpen = !orgDropdownOpen">
+                <p class="text-[12px] font-semibold text-white/70 truncate leading-tight">{{ $org?->name ?? 'BAI' }}</p>
+                <p class="text-[9px] text-white/30 capitalize truncate">{{ ucfirst($product) }}</p>
+            </div>
+            <button @click="orgDropdownOpen = !orgDropdownOpen"
+                    class="w-5 h-5 flex items-center justify-center text-white/25 hover:text-white/60 transition-colors rounded shrink-0">
+                <svg class="w-3.5 h-3.5 transition-transform" :class="orgDropdownOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
         </div>
-        {{-- Org Name --}}
-        <div class="flex-1 min-w-0 cursor-pointer" @click="orgDropdownOpen = !orgDropdownOpen">
-            <p class="text-[13px] font-semibold text-white/85 truncate leading-tight">{{ $org?->name ?? 'BAI' }}</p>
-            <p class="text-[10px] text-white/30 capitalize truncate">{{ ucfirst($product) }}</p>
-        </div>
-        <button @click="orgDropdownOpen = !orgDropdownOpen"
-                class="w-5 h-5 flex items-center justify-center text-white/25 hover:text-white/60 transition-colors rounded shrink-0">
-            <svg class="w-3.5 h-3.5 transition-transform" :class="orgDropdownOpen && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-        </button>
 
         {{-- Org Dropdown --}}
         <div x-show="orgDropdownOpen" x-cloak @click.away="orgDropdownOpen = false"
@@ -179,10 +181,17 @@ $productConfig = config('products', []);
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     Profile
                 </a>
-                @if($org)<a href="{{ route('organizations.show', $org) }}" class="flex items-center gap-2.5 px-3.5 py-2.5 text-[12px] text-white/55 hover:bg-white/[0.05] hover:text-white/80 transition-colors">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    Settings
-                </a>@endif
+                @if($org && $org->isAdmin(auth()->user()))
+                    <a href="{{ route('organizations.manage', $org) }}" class="flex items-center gap-2.5 px-3.5 py-2.5 text-[12px] text-white/55 hover:bg-white/[0.05] hover:text-white/80 transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                        Organization
+                    </a>
+                @elseif($org)
+                    <a href="{{ route('organizations.show', $org) }}" class="flex items-center gap-2.5 px-3.5 py-2.5 text-[12px] text-white/55 hover:bg-white/[0.05] hover:text-white/80 transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        Organization
+                    </a>
+                @endif
                 <div class="border-t border-white/[0.06]">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -213,9 +222,9 @@ $productConfig = config('products', []);
        x-transition:leave="transition ease-in duration-200"
        x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
        class="fixed inset-y-0 left-0 w-[280px] bg-[#0B0B12] border-r border-white/[0.06] flex flex-col z-50 lg:hidden">
-    <div class="flex items-center justify-between px-4 h-14 border-b border-white/[0.06]">
-        <span class="text-[15px] font-bold text-white/80">BAI</span>
-        <button @click="mobileSidebarOpen = false" class="p-1.5 rounded-lg hover:bg-white/[0.06] text-white/40">
+    <div class="flex items-center justify-between px-3 pt-3 pb-2 border-b border-white/[0.06]">
+        <img src="{{ asset('images/bai-logo-nav.svg') }}" alt="BAI" class="w-[180px] h-auto">
+        <button @click="mobileSidebarOpen = false" class="p-1.5 rounded-lg hover:bg-white/[0.06] text-white/40 shrink-0">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
     </div>

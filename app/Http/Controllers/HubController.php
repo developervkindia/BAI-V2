@@ -18,7 +18,12 @@ class HubController extends Controller
 
     public function index(Request $request)
     {
-        $user          = $request->user();
+        $user = $request->user();
+
+        // Super admin should always use the admin panel
+        if ($user->is_super_admin) {
+            return redirect()->route('super-admin.dashboard');
+        }
         $currentOrg    = $user->currentOrganization();
         $organizations = $user->allOrganizations();
         $allProducts   = Product::orderBy('sort_order')->get();

@@ -20,7 +20,7 @@ class EnsurePlanFeature
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return $request->expectsJson()
                 ? response()->json(['error' => 'Unauthenticated.'], 401)
                 : redirect()->route('login');
@@ -32,13 +32,13 @@ class EnsurePlanFeature
 
         $org = $user->currentOrganization();
 
-        if (!$org) {
+        if (! $org) {
             return $request->expectsJson()
                 ? response()->json(['error' => 'No organization context.'], 403)
                 : redirect()->route('hub');
         }
 
-        if (!$this->planService->canUse($org, $productKey, $featureName)) {
+        if (! $this->planService->canUse($org, $productKey, $featureName)) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'error' => 'This feature requires a plan upgrade.',
@@ -48,9 +48,9 @@ class EnsurePlanFeature
                 ], 403);
             }
 
-            return redirect()->back()->with(
+            return redirect()->route('subscriptions.index')->with(
                 'error',
-                'This feature is not available on your current plan. Please upgrade to access it.'
+                'This feature requires a plan upgrade. You are currently on the '.ucfirst($this->planService->getPlan($org, $productKey)).' plan.'
             );
         }
 

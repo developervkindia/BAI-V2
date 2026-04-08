@@ -27,9 +27,10 @@ class ProductAccessService
         // Check cache for product keys (serialization-safe plain array)
         $cachedKeys = Cache::get($cacheKey);
 
-        if (is_array($cachedKeys) && !empty($cachedKeys)) {
+        if (is_array($cachedKeys) && ! empty($cachedKeys)) {
             $products = Product::whereIn('key', $cachedKeys)->get();
             $this->requestCache[$cacheKey] = $products;
+
             return $products;
         }
 
@@ -64,11 +65,11 @@ class ProductAccessService
      */
     public function provisionFreeSmartBoard(Organization $org): void
     {
-        $freeKeys = ['board', 'projects', 'opportunity', 'hr'];
+        $freeKeys = ['board', 'projects', 'opportunity', 'hr', 'knowledge_base', 'docs'];
 
         foreach ($freeKeys as $key) {
             $product = Product::where('key', $key)->first();
-            if (!$product) {
+            if (! $product) {
                 continue;
             }
             $org->subscriptions()->firstOrCreate(

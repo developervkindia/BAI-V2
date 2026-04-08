@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Seeders\PermissionSeeder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -19,7 +20,7 @@ class Organization extends Model
     protected function casts(): array
     {
         return [
-            'is_active'      => 'boolean',
+            'is_active' => 'boolean',
             'deactivated_at' => 'datetime',
         ];
     }
@@ -38,12 +39,12 @@ class Organization extends Model
     {
         static::creating(function (Organization $org) {
             if (empty($org->slug)) {
-                $org->slug = Str::slug($org->name) . '-' . Str::random(6);
+                $org->slug = Str::slug($org->name).'-'.Str::random(6);
             }
         });
 
         static::created(function (Organization $org) {
-            \Database\Seeders\PermissionSeeder::seedRolesForOrg($org);
+            PermissionSeeder::seedRolesForOrg($org);
         });
     }
 
@@ -107,6 +108,11 @@ class Organization extends Model
     {
         return $this->owner_id === $user->id
             || $this->members()->where('user_id', $user->id)->exists();
+    }
+
+    public function isOwner(User $user): bool
+    {
+        return $this->owner_id === $user->id;
     }
 
     public function isAdmin(User $user): bool
